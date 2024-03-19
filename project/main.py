@@ -3,7 +3,7 @@ from ttkbootstrap.constants import *
 from ttkbootstrap.widgets import Meter, Button, Label, Frame
 from ttkbootstrap.tableview import Tableview
 from ttkbootstrap import PhotoImage
-from pathlib import Path
+import pathlib
 import dummy_data
 import pandas as pd
 from matplotlib.figure import Figure
@@ -11,14 +11,16 @@ from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 import seaborn as sns
 
 
-assets_path = PATH = Path(__file__).parent / 'assets'
+path = pathlib.Path(__file__).parent.resolve()
+assets_path = path.joinpath("assets")
 
 class App(ttk.Window):
     def __init__(self):
-        super().__init__()
+        super().__init__("litera")
         # main-setup
         self.title("Weight tracker")
         self.geometry("1600x900")
+        
 
         # layout\widgets
         self.topbar = TopBar(self)
@@ -29,7 +31,7 @@ class App(ttk.Window):
 
 class TopBar(Frame):
     def __init__(self, parent):
-        super().__init__(parent, width=900, height=100, style=DANGER)
+        super().__init__(parent, width=900, height=100, )
         # setup
         self.pack(side=TOP, fill=X)
         self.create_widgets()
@@ -91,12 +93,12 @@ class MainFrame(Frame):
         self.columnconfigure(index=1, weight=1, uniform="a")
         self.columnconfigure(index=2, weight=1, uniform="a")
         self.columnconfigure(index=3, weight=1, uniform="a")
-        self.rowconfigure(index=1, weight=4, uniform="a")
-        self.rowconfigure(index=2, weight=3, uniform="a")
+        self.rowconfigure(index=1, weight=1, uniform="a")
+        self.rowconfigure(index=2, weight=1, uniform="a")
 
     class TimePercentFrame(Frame):
         def __init__(self, parent):
-            super().__init__(parent, style=SUCCESS)
+            super().__init__(parent)
             # setup
             self.grid(column=1, row=1, sticky=NSEW)
             self.create_grid()
@@ -121,7 +123,7 @@ class MainFrame(Frame):
                 subtextstyle=DARK,
                 stripethickness=10,
                 interactive=True,
-                metersize=300,
+                metersize=350,
                 meterthickness=30,
             )
 
@@ -168,7 +170,7 @@ class MainFrame(Frame):
 
     class BMIFrame(Frame):
         def __init__(self, parent):
-            super().__init__(parent, style=PRIMARY)
+            super().__init__(parent)
             # setup
             self.grid(column=2, row=1, sticky=NSEW)
             self.create_grid()
@@ -226,7 +228,7 @@ class MainFrame(Frame):
 
     class ProgressFrame(Frame):
         def __init__(self, parent):
-            super().__init__(parent, style=SECONDARY)
+            super().__init__(parent)
             # setup
             self.grid(column=3, row=1, sticky=NSEW)
             self.create_grid()
@@ -251,7 +253,7 @@ class MainFrame(Frame):
                 subtextstyle=DARK,
                 stripethickness=10,
                 interactive=True,
-                metersize=300,
+                metersize=350,
                 meterthickness=30,
             )
 
@@ -284,7 +286,7 @@ class MainFrame(Frame):
 
     class InfoEnterFrame(Frame):
         def __init__(self, parent):
-            super().__init__(parent, style=WARNING)
+            super().__init__(parent)
             # setup
             self.create_grid()
             self.create_widgets()
@@ -299,6 +301,12 @@ class MainFrame(Frame):
             self.rowconfigure(2, weight=1, uniform="a")
 
         def create_widgets(self):
+            self.cat_1 = PhotoImage(file=rf"{assets_path}\left_cat.png")
+            self.cat_2 = PhotoImage(file=rf"{assets_path}\right_cat.png")
+            self.left_cat = Label(self,image=self.cat_1)
+            self.right_cat = Label(self,image=self.cat_2)
+            
+            
             self.avg_day_lost_frame = Frame(self)
             self.avg_day_lost = ttk.StringVar(value="0.25KG")
             self.avg_daily_lost = Label(
@@ -338,6 +346,10 @@ class MainFrame(Frame):
             )
 
         def create_layout(self):
+            self.left_cat.grid(column=1,row=2,sticky=NSEW)
+            self.right_cat.grid(column=3,row=2,sticky=E)
+            
+            
             self.avg_daily_lost.pack(side=TOP)
             self.avg_daily_lost_label.pack(side=TOP)
 
@@ -347,10 +359,11 @@ class MainFrame(Frame):
             self.avg_weekly_lost.pack(side=TOP)
             self.avg_weekly_lost_label.pack(side=TOP)
 
-            self.avg_day_lost_frame.grid(column=1, row=1)
-            self.body_fat_frame.grid(column=2, row=1)
-            self.avg_week_lost_frame.grid(column=3, row=1)
+            self.avg_day_lost_frame.grid(column=1, row=1,pady=20)
+            self.body_fat_frame.grid(column=2, row=1,pady=20)
+            self.avg_week_lost_frame.grid(column=3, row=1,pady=20)
             self.enter_button.grid(column=1, row=2, columnspan=3)
+
 
     class TableFrame(Frame):
         def __init__(self, parent):
@@ -396,7 +409,7 @@ class MainFrame(Frame):
             self.revenue_data["date"] = pd.to_datetime(self.revenue_data["date"])
             
             #crating plot
-            self.fig_1 = Figure(figsize=(8,8))
+            self.fig_1 = Figure(figsize=(10,10),layout='constrained')
             self.plot = self.fig_1.add_subplot()
             sns.lineplot(y = self.revenue_data["amount"],x=self.revenue_data["date"],ax=self.plot)
             self.fig_1.autofmt_xdate()
