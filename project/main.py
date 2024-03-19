@@ -4,6 +4,11 @@ from ttkbootstrap.widgets import Meter, Button, Label, Frame
 from ttkbootstrap.tableview import Tableview
 from ttkbootstrap import PhotoImage
 import pathlib
+import dummy_data
+import pandas as pd
+from matplotlib.figure import Figure
+from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
+import seaborn as sns
 
 
 path = pathlib.Path(__file__).parent.resolve()
@@ -80,6 +85,7 @@ class MainFrame(Frame):
         self.progress_frame = self.ProgressFrame(self)
         self.info_enter_frame = self.InfoEnterFrame(self)
         self.table_frame = self.TableFrame(self)
+        self.plot_frame = self.PlotFrame(self)
         self.pack(expand=True, fill=BOTH)
 
     def grid_main_frame(self):
@@ -378,5 +384,28 @@ class MainFrame(Frame):
         def create_layout(self):
             self.table.pack(fill=BOTH, expand=YES, padx=10, pady=10)
 
-
+    class PlotFrame(Frame):
+        def __init__(self, parent):
+            super().__init__(parent)
+            # setup
+            self.create_widgets()
+            self.create_layout()
+            self.grid(column=1, row=2, sticky=NSEW)
+        def create_widgets(self):
+            #loading data
+            self.revenue_data=pd.DataFrame(dummy_data.revenue)
+            self.revenue_data["date"] = pd.to_datetime(self.revenue_data["date"])
+            
+            #crating plot
+            self.fig_1 = Figure(figsize=(8,8))
+            self.plot = self.fig_1.add_subplot()
+            sns.lineplot(y = self.revenue_data["amount"],x=self.revenue_data["date"],ax=self.plot)
+            self.fig_1.autofmt_xdate()
+            self.canvas = FigureCanvasTkAgg(master=self,figure=self.fig_1)
+            self.canvas.draw()
+        
+        def create_layout(self):
+            self.canvas.get_tk_widget().pack()
+            
+            
 App()
