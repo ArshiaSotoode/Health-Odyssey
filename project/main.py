@@ -3,7 +3,7 @@ from ttkbootstrap.constants import *
 from ttkbootstrap.widgets import Meter, Button, Label, Frame
 from ttkbootstrap.tableview import Tableview
 from ttkbootstrap import PhotoImage
-import pathlib
+from pathlib import Path
 import dummy_data
 import pandas as pd
 from matplotlib.figure import Figure
@@ -11,8 +11,7 @@ from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 import seaborn as sns
 
 
-path = pathlib.Path(__file__).parent.resolve()
-assets_path = path.joinpath("assets")
+assets_path = PATH = Path(__file__).parent / 'assets'
 
 class App(ttk.Window):
     def __init__(self):
