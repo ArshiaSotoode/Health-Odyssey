@@ -390,7 +390,7 @@ class MainFrame(Frame):
                 rowdata=self.rowdata,
                 paginated=True,
                 searchable=True,
-                bootstyle=PRIMARY,
+                bootstyle=PRIMARY
             )
 
         def create_layout(self):
