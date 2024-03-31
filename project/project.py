@@ -11,16 +11,18 @@ from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 import seaborn as sns
 
 
+# getting the path of current working directory
 path = pathlib.Path(__file__).parent.resolve()
 assets_path = path.joinpath("assets")
 
+
+# creating the main app
 class App(ttk.Window):
     def __init__(self):
         super().__init__("litera")
         # main-setup
         self.title("Weight tracker")
         self.geometry("1600x900")
-        
 
         # layout\widgets
         self.topbar = TopBar(self)
@@ -29,9 +31,14 @@ class App(ttk.Window):
         self.mainloop()
 
 
+# creating the top bar
 class TopBar(Frame):
     def __init__(self, parent):
-        super().__init__(parent, width=900, height=100, )
+        super().__init__(
+            parent,
+            width=900,
+            height=100,
+        )
         # setup
         self.pack(side=TOP, fill=X)
         self.create_widgets()
@@ -42,31 +49,38 @@ class TopBar(Frame):
     """
 
     def create_widgets(self):
+        # user info button
         self.user_img = PhotoImage(file=rf"{assets_path}\user.png")
         self.user_button = Button(self, image=self.user_img, style="link.TButton")
 
+        # user name text
         self.name = ttk.StringVar(value="Arshia Sotoode")
         self.user_name = Label(
             self, textvariable=self.name, font="roboto 25 underline bold"
         )
 
+        # user height text
         self.height = ttk.StringVar(value="189cm")
         self.user_height = Label(
             self, textvariable=self.height, font="roboto 12 underline"
         )
 
+        # editing user info button
         self.edit_img = PhotoImage(file=rf"{assets_path}\edit.png")
         self.edit_button = Button(self, image=self.edit_img, style="link.TButton")
 
+        # user switch button
         self.switch_user_img = PhotoImage(file=rf"{assets_path}\switch_user.png")
         self.switch_user_button = Button(
             self, image=self.switch_user_img, style="link.TButton"
         )
 
+        # setting button
         self.setting_img = PhotoImage(file=rf"{assets_path}\setting.png")
         self.setting_button = Button(self, image=self.setting_img, style="link.TButton")
 
     def create_layout(self):
+        # placing the widgets
         self.user_button.pack(side=LEFT, padx=10, pady=10)
         self.user_name.pack(side=LEFT, padx=5, pady=10)
         self.user_height.pack(side=LEFT, padx=5, pady=10)
@@ -81,6 +95,7 @@ class MainFrame(Frame):
         # setup
 
         self.grid_main_frame()
+        # placing the frames inside
         self.time_percent_frame = self.TimePercentFrame(self)
         self.BMI_frame = self.BMIFrame(self)
         self.progress_frame = self.ProgressFrame(self)
@@ -90,6 +105,7 @@ class MainFrame(Frame):
         self.pack(expand=True, fill=BOTH)
 
     def grid_main_frame(self):
+        # creating the grid tables
         self.columnconfigure(index=1, weight=1, uniform="a")
         self.columnconfigure(index=2, weight=1, uniform="a")
         self.columnconfigure(index=3, weight=1, uniform="a")
@@ -106,12 +122,14 @@ class MainFrame(Frame):
             self.create_layout()
 
         def create_grid(self):
+            # creating the grid tables
             self.columnconfigure(1, weight=1, uniform="a")
             self.columnconfigure(2, weight=1, uniform="a")
             self.rowconfigure(1, weight=10)
             self.rowconfigure(2, weight=1)
 
         def create_widgets(self):
+            # creating the time percent meter
             self.time_percent = 74
             self.time_percent = Meter(
                 self,
@@ -126,7 +144,7 @@ class MainFrame(Frame):
                 metersize=350,
                 meterthickness=30,
             )
-
+            # creating the total time frame and putting the time value and label inside
             self.total_time_frame = Frame(self)
             self.tot_time = ttk.StringVar(value="37 days")
             self.total_time = Label(
@@ -136,6 +154,7 @@ class MainFrame(Frame):
                 self.total_time_frame, text="total time", font="roboto 12"
             )
 
+            # creating the days past frame and putting the days past value and label inside
             self.days_past_frame = Frame(self)
             self.past = ttk.IntVar(value=81)
             self.days_past = Label(
@@ -145,6 +164,7 @@ class MainFrame(Frame):
                 self.days_past_frame, text="Days past", font="roboto 12"
             )
 
+            # creating the days remaining frame and putting the days remaining value and label inside
             self.days_remaining_frame = Frame(self)
             self.remaining = ttk.IntVar(value=81)
             self.days_remaining = Label(
@@ -157,6 +177,7 @@ class MainFrame(Frame):
             )
 
         def create_layout(self):
+            # placing the widgets inside of frames and then placing frames
             self.total_time.pack(side=TOP)
             self.total_time_lable.pack(side=TOP)
             self.days_past.pack(side=TOP)
@@ -172,18 +193,21 @@ class MainFrame(Frame):
         def __init__(self, parent):
             super().__init__(parent)
             # setup
+            # placing the frame inside of the main frame
             self.grid(column=2, row=1, sticky=NSEW)
             self.create_grid()
             self.create_widgets()
             self.create_layout()
 
         def create_grid(self):
+            # creating the grid tables
             self.columnconfigure(1, weight=1, uniform="a")
             self.columnconfigure(2, weight=1, uniform="a")
             self.rowconfigure(1, weight=10)
             self.rowconfigure(2, weight=1)
 
         def create_widgets(self):
+            # creating the BMI meter
             self.BMI = 74
             self.BMI_meter = Meter(
                 self,
@@ -197,7 +221,7 @@ class MainFrame(Frame):
                 metersize=400,
                 meterthickness=30,
             )
-
+            # creating the current weight frame and putting the current weight value and label inside
             self.cw_frame = Frame(self)
             self.cw = ttk.IntVar(value=87)
             self.current_weight = Label(
@@ -206,7 +230,7 @@ class MainFrame(Frame):
             self.cw_lable = Label(
                 self.cw_frame, text="Current weight", font="roboto 12"
             )
-
+            # creating the goal weight frame and putting the goal weight value and label inside
             self.gw_frame = Frame(self)
             self.gw = ttk.IntVar(value=81)
             self.goal_weight = Label(
@@ -215,6 +239,7 @@ class MainFrame(Frame):
             self.gw_lable = Label(self.gw_frame, text="Goal weight", font="roboto 12")
 
         def create_layout(self):
+            # placing the widgets
             self.BMI_meter.grid(column=1, row=1, columnspan=2)
 
             self.current_weight.pack(side=TOP)
@@ -230,18 +255,21 @@ class MainFrame(Frame):
         def __init__(self, parent):
             super().__init__(parent)
             # setup
+            # placing the frame inside of the main frame
             self.grid(column=3, row=1, sticky=NSEW)
             self.create_grid()
             self.create_widgets()
             self.create_layout()
 
         def create_grid(self):
+            # creating the grid tables
             self.columnconfigure(1, weight=1, uniform="a")
             self.columnconfigure(2, weight=1, uniform="a")
             self.rowconfigure(1, weight=10)
             self.rowconfigure(2, weight=1)
 
         def create_widgets(self):
+            # creating the progress percent meter
             self.progress_percent = 74
             self.progress_percent = Meter(
                 self,
@@ -256,7 +284,7 @@ class MainFrame(Frame):
                 metersize=350,
                 meterthickness=30,
             )
-
+            # creating the lost weight frame and putting the lost wight value and label inside
             self.lost_frame = Frame(self)
             self._lost = ttk.StringVar(value="16KG")
             self.lost = Label(
@@ -264,6 +292,7 @@ class MainFrame(Frame):
             )
             self.lost_lable = Label(self.lost_frame, text="Lost", font="roboto 12")
 
+            # creating the remaining weight frame and putting the remaining wight value and label inside
             self.remaining_frame = Frame(self)
             self._remaining = ttk.StringVar(value="9KG")
             self.remaining = Label(
@@ -276,6 +305,7 @@ class MainFrame(Frame):
             )
 
         def create_layout(self):
+            # placing the widgets
             self.lost.pack(side=TOP)
             self.lost_lable.pack(side=TOP)
             self.remaining.pack(side=TOP)
@@ -291,9 +321,11 @@ class MainFrame(Frame):
             self.create_grid()
             self.create_widgets()
             self.create_layout()
+            # placing  the frame inside of the main frame
             self.grid(column=2, row=2, sticky=NSEW)
 
         def create_grid(self):
+            # creating the grid tables
             self.columnconfigure(1, weight=1, uniform="a")
             self.columnconfigure(2, weight=1, uniform="a")
             self.columnconfigure(3, weight=1, uniform="a")
@@ -301,12 +333,13 @@ class MainFrame(Frame):
             self.rowconfigure(2, weight=1, uniform="a")
 
         def create_widgets(self):
+            # loading the images of the two cats and loading the images
             self.cat_1 = PhotoImage(file=rf"{assets_path}\left_cat.png")
             self.cat_2 = PhotoImage(file=rf"{assets_path}\right_cat.png")
-            self.left_cat = Label(self,image=self.cat_1)
-            self.right_cat = Label(self,image=self.cat_2)
-            
-            
+            self.left_cat = Label(self, image=self.cat_1)
+            self.right_cat = Label(self, image=self.cat_2)
+
+            # creating the average daily lost frame and putting the average daily lost value and label inside
             self.avg_day_lost_frame = Frame(self)
             self.avg_day_lost = ttk.StringVar(value="0.25KG")
             self.avg_daily_lost = Label(
@@ -318,6 +351,7 @@ class MainFrame(Frame):
                 self.avg_day_lost_frame, text="Avg daily lost", font="roboto 12"
             )
 
+            # creating body fat percentage time frame and putting the body fat percentage value and label inside
             self.body_fat_frame = Frame(self)
             self.body_fat = ttk.StringVar(value="27%")
             self.body_fat_percent = Label(
@@ -329,6 +363,7 @@ class MainFrame(Frame):
                 self.body_fat_frame, text="Body fat", font="roboto 12"
             )
 
+            # creating the average weekly lost frame and putting the average weekly lost value and label inside
             self.avg_week_lost_frame = Frame(self)
             self.avg_week_lost = ttk.StringVar(value="27%")
             self.avg_weekly_lost = Label(
@@ -340,16 +375,17 @@ class MainFrame(Frame):
                 self.avg_week_lost_frame, text="Body fat", font="roboto 12"
             )
 
+            # loading the enter button image and creating it
             self.enter_butt_img = PhotoImage(file=rf"{assets_path}\enter_butt.png")
             self.enter_button = Button(
                 self, image=self.enter_butt_img, style="link.TButton"
             )
 
         def create_layout(self):
-            self.left_cat.grid(column=1,row=2,sticky=NSEW)
-            self.right_cat.grid(column=3,row=2,sticky=E)
-            
-            
+            # placing widgets
+            self.left_cat.grid(column=1, row=2, sticky=NSEW)
+            self.right_cat.grid(column=3, row=2, sticky=E)
+
             self.avg_daily_lost.pack(side=TOP)
             self.avg_daily_lost_label.pack(side=TOP)
 
@@ -359,11 +395,10 @@ class MainFrame(Frame):
             self.avg_weekly_lost.pack(side=TOP)
             self.avg_weekly_lost_label.pack(side=TOP)
 
-            self.avg_day_lost_frame.grid(column=1, row=1,pady=20)
-            self.body_fat_frame.grid(column=2, row=1,pady=20)
-            self.avg_week_lost_frame.grid(column=3, row=1,pady=20)
+            self.avg_day_lost_frame.grid(column=1, row=1, pady=20)
+            self.body_fat_frame.grid(column=2, row=1, pady=20)
+            self.avg_week_lost_frame.grid(column=3, row=1, pady=20)
             self.enter_button.grid(column=1, row=2, columnspan=3)
-
 
     class TableFrame(Frame):
         def __init__(self, parent):
@@ -371,9 +406,11 @@ class MainFrame(Frame):
             # setup
             self.create_widgets()
             self.create_layout()
+            # placing the frame inside of the main frame
             self.grid(column=3, row=2, sticky=NSEW)
 
         def create_widgets(self):
+            # dummy data
             self.coldata = [
                 {"text": "weight", "stretch": False},
                 {"text": "lost", "stretch": False},
@@ -384,16 +421,19 @@ class MainFrame(Frame):
                 ("85KG", "-15.0KG", "nov/15/2023"),
                 ("96KG", "-2.0KG", "nov/3/2023"),
             ]
+
+            # creating the table
             self.table = Tableview(
                 self,
                 coldata=self.coldata,
                 rowdata=self.rowdata,
                 paginated=True,
                 searchable=True,
-                bootstyle=PRIMARY
+                bootstyle=PRIMARY,
             )
 
         def create_layout(self):
+            # placing the table
             self.table.pack(fill=BOTH, expand=YES, padx=10, pady=10)
 
     class PlotFrame(Frame):
@@ -402,22 +442,29 @@ class MainFrame(Frame):
             # setup
             self.create_widgets()
             self.create_layout()
+            # placing the frame inside of the main frame
             self.grid(column=1, row=2, sticky=NSEW)
+
         def create_widgets(self):
-            #loading data
-            self.revenue_data=pd.DataFrame(dummy_data.revenue)
+            # loading data
+            self.revenue_data = pd.DataFrame(dummy_data.revenue)
             self.revenue_data["date"] = pd.to_datetime(self.revenue_data["date"])
-            
-            #crating plot
-            self.fig_1 = Figure(figsize=(10,10),layout='constrained')
+
+            # crating plot
+            self.fig_1 = Figure(figsize=(10, 10), layout="constrained")
             self.plot = self.fig_1.add_subplot()
-            sns.lineplot(y = self.revenue_data["amount"],x=self.revenue_data["date"],ax=self.plot)
+            sns.lineplot(
+                y=self.revenue_data["amount"], x=self.revenue_data["date"], ax=self.plot
+            )
+            # make the x axis(dates) more elegant and human readable
             self.fig_1.autofmt_xdate()
-            self.canvas = FigureCanvasTkAgg(master=self,figure=self.fig_1)
+            # creating the canvas and putting the plot in it and drawing the canvas
+            self.canvas = FigureCanvasTkAgg(master=self, figure=self.fig_1)
             self.canvas.draw()
-        
+
         def create_layout(self):
+            # placing the canvas
             self.canvas.get_tk_widget().pack()
-            
-            
+
+
 App()
