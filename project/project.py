@@ -9,6 +9,7 @@ import pandas as pd
 from matplotlib.figure import Figure
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 import seaborn as sns
+from tkinter.font import nametofont
 
 
 path = pathlib.Path(__file__).parent.resolve()
@@ -374,6 +375,9 @@ class MainFrame(Frame):
             self.grid(column=3, row=2, sticky=NSEW)
 
         def create_widgets(self):
+            #determining the font size for the table
+            default_font = nametofont("TkDefaultFont")
+            default_font.configure(size=14,weight='bold')
             self.coldata = [
                 {"text": "weight", "stretch": False},
                 {"text": "lost", "stretch": False},
