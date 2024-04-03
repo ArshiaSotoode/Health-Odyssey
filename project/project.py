@@ -11,6 +11,8 @@ from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 import seaborn as sns
 from tkinter.font import nametofont
 
+def main():
+    App()
 
 #getting the path and adding the wanted directory to the path
 def get_path(join_path=""):
@@ -484,4 +486,6 @@ class MainFrame(Frame):
             self.canvas.get_tk_widget().pack()
 
 
-App()
+if __name__ == "__main__":
+    main()
+
