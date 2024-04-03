@@ -12,9 +12,12 @@ import seaborn as sns
 from tkinter.font import nametofont
 
 
-# getting the path of current working directory
-path = pathlib.Path(__file__).parent.resolve()
-assets_path = path.joinpath("assets")
+#getting the path and adding the wanted directory to the path
+def get_path(join_path=""):
+    # getting the path of current working directory
+    path = pathlib.Path(__file__).parent.resolve()
+    #joining the extra path
+    return path.joinpath(join_path)
 
 
 # creating the main app
@@ -51,7 +54,9 @@ class TopBar(Frame):
 
     def create_widgets(self):
         # user info button
-        self.user_img = PhotoImage(file=rf"{assets_path}\user.png")
+        #getting the path for user butt img
+        self.user_img_path = get_path(r"assets\user.png")
+        self.user_img = PhotoImage(file=self.user_img_path)
         self.user_button = Button(self, image=self.user_img, style="link.TButton")
 
         # user name text
@@ -67,17 +72,23 @@ class TopBar(Frame):
         )
 
         # editing user info button
-        self.edit_img = PhotoImage(file=rf"{assets_path}\edit.png")
+        #getting the path for user butt img
+        self.edit_img_path = get_path(r"assets\edit.png")
+        self.edit_img = PhotoImage(file=self.edit_img_path)
         self.edit_button = Button(self, image=self.edit_img, style="link.TButton")
 
         # user switch button
-        self.switch_user_img = PhotoImage(file=rf"{assets_path}\switch_user.png")
+        #getting the path for user butt img
+        self.switch_user_img_path = get_path(r"assets\switch_user.png")
+        self.switch_user_img = PhotoImage(file=self.switch_user_img_path)
         self.switch_user_button = Button(
             self, image=self.switch_user_img, style="link.TButton"
         )
 
         # setting button
-        self.setting_img = PhotoImage(file=rf"{assets_path}\setting.png")
+        #getting the path for user butt img
+        self.setting_img_path = get_path(r"assets\setting.png")
+        self.setting_img = PhotoImage(file=self.setting_img_path)
         self.setting_button = Button(self, image=self.setting_img, style="link.TButton")
 
     def create_layout(self):
@@ -335,8 +346,10 @@ class MainFrame(Frame):
 
         def create_widgets(self):
             # loading the images of the two cats and loading the images
-            self.cat_1 = PhotoImage(file=rf"{assets_path}\left_cat.png")
-            self.cat_2 = PhotoImage(file=rf"{assets_path}\right_cat.png")
+            self.cat_1_img_path = get_path(r"assets\left_cat.png")
+            self.cat_2_img_path = get_path(r"assets\right_cat.png")
+            self.cat_1 = PhotoImage(file=self.cat_1_img_path)
+            self.cat_2 = PhotoImage(file=self.cat_2_img_path)
             self.left_cat = Label(self, image=self.cat_1)
             self.right_cat = Label(self, image=self.cat_2)
 
@@ -377,7 +390,8 @@ class MainFrame(Frame):
             )
 
             # loading the enter button image and creating it
-            self.enter_butt_img = PhotoImage(file=rf"{assets_path}\enter_butt.png")
+            self.user_img_path = get_path(r"assets\enter_butt.png")
+            self.enter_butt_img = PhotoImage(file=self.user_img_path)
             self.enter_button = Button(
                 self, image=self.enter_butt_img, style="link.TButton"
             )
