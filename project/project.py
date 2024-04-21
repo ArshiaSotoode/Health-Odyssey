@@ -1,6 +1,6 @@
 import ttkbootstrap as ttk
 from ttkbootstrap.constants import *
-from ttkbootstrap.widgets import Meter, Button, Label, Frame
+from ttkbootstrap.widgets import Meter, Button, Label, Frame ,Entry
 from ttkbootstrap.tableview import Tableview
 from ttkbootstrap import PhotoImage
 import pathlib
@@ -12,7 +12,7 @@ import seaborn as sns
 from tkinter.font import nametofont
 
 def main():
-    App()
+    SignUp()
 
 #getting the path and adding the wanted directory to the path
 def get_path(join_path=""):
@@ -21,6 +21,171 @@ def get_path(join_path=""):
     #joining the extra path
     return path.joinpath(join_path)
 
+class SignUp(ttk.Window):
+    def __init__(self):
+        super().__init__("litera")
+        # main-setup
+        self.title("Weight tracker")
+        self.geometry("700x900")
+        self.resizable(width=False,height=False)
+        
+        self.create_widgets()
+        self.create_layout() 
+
+        
+        
+        self.mainloop()
+
+    def create_widgets(self):
+        
+        #creating the Main Frame
+        self.main_frame = Frame(self)
+        
+        #girding the main_frame
+        self.main_frame.columnconfigure(index=1, weight=1, uniform="a")
+        self.main_frame.columnconfigure(index=2, weight=1, uniform="a")
+        self.main_frame.rowconfigure(index=1, weight=1, uniform="a")
+        self.main_frame.rowconfigure(index=2, weight=1, uniform="a")
+        self.main_frame.rowconfigure(index=3, weight=1, uniform="a")
+        self.main_frame.rowconfigure(index=4, weight=2, uniform="a")
+        self.main_frame.rowconfigure(index=5, weight=4, uniform="a")
+        self.main_frame.rowconfigure(index=6, weight=1, uniform="a")
+        #the welcome label
+        self.welcome = Label(self.main_frame,text="Welcome😍",font="roboto 40 bold")
+
+        #input name
+        self.name_entry_stringvar = ttk.StringVar()
+        self.name_entry_frame = Frame(self.main_frame)
+        self.name_entry_label = Label(self.name_entry_frame,text="Name : ",font="roboto 15 bold")
+        self.name_entry = Entry(self.name_entry_frame,textvariable=self.name_entry_stringvar,font="roboto 15")
+        
+        
+        #input last_name
+        self.last_name_entry_stringvar = ttk.StringVar()
+        self.last_name_entry_frame = Frame(self.main_frame)
+        self.last_name_entry_label = Label(self.last_name_entry_frame,text="Last Name : ",font="roboto 15 bold")
+        self.last_name_entry = Entry(self.last_name_entry_frame,textvariable=self.last_name_entry_stringvar,font="roboto 15")
+        
+        
+        #input Date of birth
+        self.date_of_birth_frame = Frame(self.main_frame)
+        self.date_of_birth_entry = ttk.DateEntry(self.date_of_birth_frame)
+        self.date_of_birth_label = Label(self.date_of_birth_frame,text="Date of birth : ",font="roboto 15 bold")
+        
+        #input gender
+        self.gender_frame = Frame(self.main_frame)
+        self.gender_label = Label(self.gender_frame,text="Gender : ",font="roboto 15 bold")
+
+        #making a list and inserting it to our combobox
+        self.gender_combobox_list = ["Male","Female"]
+        self.gender_combobox = ttk.Combobox(self.gender_frame,values=self.gender_combobox_list,font="roboto 15")
+        #setting the default value for combobox
+        self.gender_combobox.current(0)
+        
+
+        #height selector
+        self.height_meter = Meter(self.main_frame,
+                                  subtext="Height",
+                                  subtextfont="roboto 20 bold",
+                                  metertype=SEMI,
+                                  stripethickness=5,
+                                  interactive=True,
+                                  metersize=250,
+                                  meterthickness=15,
+                                  amounttotal=250,
+                                  amountused=160,
+                                  textright="Cm")
+        self.up_arrow_img_path = get_path(r"assets\up_arrow.png")
+        self.up_arrow_img = PhotoImage(file=self.up_arrow_img_path)
+        self.down_arrow_img_path = get_path(r"assets\down_arrow.png")
+        self.down_arrow_img = PhotoImage(file=self.down_arrow_img_path)
+        self.increase_height_butt = Button(self.main_frame,image=self.up_arrow_img, style="link.TButton")
+        self.decrees_height_butt = Button(self.main_frame,image=self.down_arrow_img, style="link.TButton")
+        
+        
+        #start weight/date
+        self.start_wight_meter = Meter(self.main_frame,
+                                  subtext="Start Weight",
+                                  subtextfont="roboto 20 bold",
+                                  metertype=SEMI,
+                                  stripethickness=5,
+                                  interactive=True,
+                                  metersize=300,
+                                  meterthickness=15,
+                                  amounttotal=160,
+                                  amountused=80,
+                                  textright="KG")
+        
+        
+        self.start_date = ttk.DateEntry(self.main_frame)
+        
+        
+        #target weight/date
+        self.target_wight_meter = Meter(self.main_frame,
+                                  subtext="Target Weight",
+                                  subtextfont="roboto 20 bold",
+                                  metertype=SEMI,
+                                  stripethickness=5,
+                                  interactive=True,
+                                  metersize=300,
+                                  meterthickness=15,
+                                  amounttotal=160,
+                                  amountused=80,
+                                  textright="KG")
+
+        self.target_date = ttk.DateEntry(self.main_frame)
+        
+        #styling the sign up butt
+        self.sign_up_style = ttk.Style()
+        self.sign_up_style.configure('sign_up.TButton', font=("roboto", 25))
+        #sign up button
+        
+        self.sign_up_butt = Button(self.main_frame,text="Sign up",style='sign_up.TButton',width=8)
+
+
+    
+    
+    
+    def create_layout(self):
+        self.welcome.grid(column=1,columnspan=2,row=1)
+        #packing the name_entry
+        self.name_entry_label.pack(side=LEFT)
+        self.name_entry.pack(side=LEFT)
+        self.name_entry_frame.grid(column=1,row=2,padx=10,pady=10)
+        #packing the last_name_entry
+        self.last_name_entry_label.pack(side=LEFT)
+        self.last_name_entry.pack(side=LEFT)
+        self.last_name_entry_frame.grid(column=2,row=2,padx=10,pady=10)        
+        
+        #packing date of birth
+        self.date_of_birth_label.pack(side=LEFT)
+        self.date_of_birth_entry.pack(side=RIGHT,padx=10)
+        self.date_of_birth_frame.grid(column=1,row=3)
+        
+        #packing gender combobox
+        self.gender_label.pack(side=LEFT)
+        self.gender_combobox.pack(side=RIGHT)
+        self.gender_frame.grid(column=2,row=3)
+        
+        #packing height input
+        self.height_meter.grid(column=1,row=4,columnspan=2)
+        self.increase_height_butt.grid(column=2,row=4)
+        self.decrees_height_butt.grid(column=1,row=4)
+        
+        
+        #pack start weight and start date
+        self.start_wight_meter.grid(column=1,row=5)
+        self.start_date.grid(column=1,row=5,sticky=S)
+        
+        #pack target weight and start date
+        self.target_wight_meter.grid(column=2,row=5)
+        self.target_date.grid(column=2,row=5,sticky=S)
+        
+        #pack sign up butt
+        self.sign_up_butt.grid(column=1,row=6,columnspan=2)
+        
+        #packing the main_frame
+        self.main_frame.pack()
 
 # creating the main app
 class App(ttk.Window):
