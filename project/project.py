@@ -10,9 +10,11 @@ from matplotlib.figure import Figure
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 import seaborn as sns
 from tkinter.font import nametofont
+from os.path import exists
+from time import sleep
 
 def main():
-    SignUp()
+    check_sign_up()
 
 #getting the path and adding the wanted directory to the path
 def get_path(join_path=""):
@@ -20,6 +22,18 @@ def get_path(join_path=""):
     path = pathlib.Path(__file__).parent.resolve()
     #joining the extra path
     return path.joinpath(join_path)
+
+
+#check if the user signed up and if not ask theme for it
+def check_sign_up():
+    if exists(get_path(r"data\user_info.csv")):
+        App()
+    else:
+        SignUp()
+
+        
+        
+
 
 class SignUp(ttk.Window):
     def __init__(self):
@@ -77,8 +91,9 @@ class SignUp(ttk.Window):
         self.gender_label = Label(self.gender_frame,text="Gender : ",font="roboto 15 bold")
 
         #making a list and inserting it to our combobox
+        self.gender_combobox_stringvar = ttk.StringVar()
         self.gender_combobox_list = ["Male","Female"]
-        self.gender_combobox = ttk.Combobox(self.gender_frame,values=self.gender_combobox_list,font="roboto 15")
+        self.gender_combobox = ttk.Combobox(self.gender_frame,values=self.gender_combobox_list,font="roboto 15",textvariable=self.gender_combobox_stringvar)
         #setting the default value for combobox
         self.gender_combobox.current(0)
         
@@ -140,11 +155,7 @@ class SignUp(ttk.Window):
         self.sign_up_style.configure('sign_up.TButton', font=("roboto", 25))
         #sign up button
         
-        self.sign_up_butt = Button(self.main_frame,text="Sign up",style='sign_up.TButton',width=8)
-
-
-    
-    
+        self.sign_up_butt = Button(self.main_frame,text="Sign up",style='sign_up.TButton',width=8,command=self.save_info)
     
     def create_layout(self):
         self.welcome.grid(column=1,columnspan=2,row=1)
@@ -186,7 +197,31 @@ class SignUp(ttk.Window):
         
         #packing the main_frame
         self.main_frame.pack()
-
+        
+        
+        
+    #saving sign up info in a csv file
+    def save_info(self):
+        #storing the data in a dict
+        self.user_data = {"name":self.name_entry_stringvar.get(),
+                          "last_name":self.last_name_entry_stringvar.get(),
+                          "date of birth":self.date_of_birth_entry.entry.get(),
+                          "gender":self.gender_combobox_stringvar.get(),
+                          "height":self.height_meter.amountusedvar.get(),
+                          "start weight":self.start_wight_meter.amountusedvar.get(),
+                          "target weight":self.target_wight_meter.amountusedvar.get(),
+                          "start date":self.start_date.entry.get(),
+                          "target date":self.target_date.entry.get(),
+                          }
+        self.user_info_df = pd.DataFrame(self.user_data,index=[0])
+        self.user_info_df.to_csv(get_path(r"data\user_info.csv"))
+        self.destroy()
+    
+    
+        
+        
+        
+        
 # creating the main app
 class App(ttk.Window):
     def __init__(self):
@@ -198,6 +233,7 @@ class App(ttk.Window):
         # layout\widgets
         self.topbar = TopBar(self)
         self.mainframe = MainFrame(self)
+        
         # run
         self.mainloop()
 
