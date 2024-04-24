@@ -1,6 +1,6 @@
 import ttkbootstrap as ttk
 from ttkbootstrap.constants import *
-from ttkbootstrap.widgets import Meter, Button, Label, Frame ,Entry
+from ttkbootstrap.widgets import Meter, Button, Label, Frame, Entry
 from ttkbootstrap.tableview import Tableview
 from ttkbootstrap import PhotoImage
 import pathlib
@@ -11,217 +11,276 @@ from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 import seaborn as sns
 from tkinter.font import nametofont
 from os.path import exists
-from time import sleep
+from string import punctuation
+
+# file variables
+punctuation += " "
+
 
 def main():
     check_sign_up()
 
-#getting the path and adding the wanted directory to the path
+
+# getting the path and adding the wanted directory to the path
 def get_path(join_path=""):
     # getting the path of current working directory
     path = pathlib.Path(__file__).parent.resolve()
-    #joining the extra path
+    # joining the extra path
     return path.joinpath(join_path)
 
 
-#check if the user signed up and if not ask theme for it
+# check if the user signed up and if not ask theme for it
 def check_sign_up():
     if exists(get_path(r"data\user_info.csv")):
         App()
     else:
         SignUp()
 
-        
-        
+
+# creating the validating functions
+def validate_name(input):
+    if any(p in input for p in punctuation) or input.isdigit() or len(input)<3:
+        return False
+    else:
+        return True
 
 
+# creating the sign up page
 class SignUp(ttk.Window):
     def __init__(self):
         super().__init__("litera")
         # main-setup
         self.title("Weight tracker")
         self.geometry("700x900")
-        self.resizable(width=False,height=False)
-        
-        self.create_widgets()
-        self.create_layout() 
+        self.resizable(width=False, height=False)
 
-        
-        
+        self.create_widgets()
+        self.create_layout()
+
         self.mainloop()
 
     def create_widgets(self):
-        
-        #creating the Main Frame
+
+        # creating the Main Frame
         self.main_frame = Frame(self)
-        
-        #girding the main_frame
+
+        # girding the main_frame
         self.main_frame.columnconfigure(index=1, weight=1, uniform="a")
         self.main_frame.columnconfigure(index=2, weight=1, uniform="a")
         self.main_frame.rowconfigure(index=1, weight=1, uniform="a")
         self.main_frame.rowconfigure(index=2, weight=1, uniform="a")
         self.main_frame.rowconfigure(index=3, weight=1, uniform="a")
-        self.main_frame.rowconfigure(index=4, weight=2, uniform="a")
+        self.main_frame.rowconfigure(index=4, weight=3, uniform="a")
         self.main_frame.rowconfigure(index=5, weight=4, uniform="a")
         self.main_frame.rowconfigure(index=6, weight=1, uniform="a")
-        #the welcome label
-        self.welcome = Label(self.main_frame,text="Welcome😍",font="roboto 40 bold")
 
-        #input name
+        # registering validation functions
+        valid_name = self.register(validate_name)
+
+        # the welcome label
+        self.welcome = Label(self.main_frame, text="Welcome😍", font="roboto 40 bold")
+
+        # input name
         self.name_entry_stringvar = ttk.StringVar()
         self.name_entry_frame = Frame(self.main_frame)
-        self.name_entry_label = Label(self.name_entry_frame,text="Name : ",font="roboto 15 bold")
-        self.name_entry = Entry(self.name_entry_frame,textvariable=self.name_entry_stringvar,font="roboto 15")
-        
-        
-        #input last_name
+        self.name_entry_label = Label(
+            self.name_entry_frame, text="Name : ", font="roboto 15 bold"
+        )
+        self.name_entry = Entry(
+            self.name_entry_frame,
+            textvariable=self.name_entry_stringvar,
+            font="roboto 15",
+            validatecommand=(valid_name, "%P"),
+            validate="focus",
+        )
+
+        # input last_name
         self.last_name_entry_stringvar = ttk.StringVar()
         self.last_name_entry_frame = Frame(self.main_frame)
-        self.last_name_entry_label = Label(self.last_name_entry_frame,text="Last Name : ",font="roboto 15 bold")
-        self.last_name_entry = Entry(self.last_name_entry_frame,textvariable=self.last_name_entry_stringvar,font="roboto 15")
-        
-        
-        #input Date of birth
+        self.last_name_entry_label = Label(
+            self.last_name_entry_frame, text="Last Name : ", font="roboto 15 bold"
+        )
+        self.last_name_entry = Entry(
+            self.last_name_entry_frame,
+            textvariable=self.last_name_entry_stringvar,
+            font="roboto 15",
+            validatecommand=(valid_name, "%P"),
+            validate="focus",
+        )
+
+        # input Date of birth
         self.date_of_birth_frame = Frame(self.main_frame)
         self.date_of_birth_entry = ttk.DateEntry(self.date_of_birth_frame)
-        self.date_of_birth_label = Label(self.date_of_birth_frame,text="Date of birth : ",font="roboto 15 bold")
-        
-        #input gender
+        self.date_of_birth_label = Label(
+            self.date_of_birth_frame, text="Date of birth : ", font="roboto 15 bold"
+        )
+
+        # input gender
         self.gender_frame = Frame(self.main_frame)
-        self.gender_label = Label(self.gender_frame,text="Gender : ",font="roboto 15 bold")
+        self.gender_label = Label(
+            self.gender_frame, text="Gender : ", font="roboto 15 bold"
+        )
 
-        #making a list and inserting it to our combobox
+        # making a list and inserting it to our combobox
         self.gender_combobox_stringvar = ttk.StringVar()
-        self.gender_combobox_list = ["Male","Female"]
-        self.gender_combobox = ttk.Combobox(self.gender_frame,values=self.gender_combobox_list,font="roboto 15",textvariable=self.gender_combobox_stringvar)
-        #setting the default value for combobox
+        self.gender_combobox_list = ["Male", "Female"]
+        self.gender_combobox = ttk.Combobox(
+            self.gender_frame,
+            values=self.gender_combobox_list,
+            font="roboto 15",
+            textvariable=self.gender_combobox_stringvar,
+        )
+        # setting the default value for combobox
         self.gender_combobox.current(0)
-        
 
-        #height selector
-        self.height_meter = Meter(self.main_frame,
-                                  subtext="Height",
-                                  subtextfont="roboto 20 bold",
-                                  metertype=SEMI,
-                                  stripethickness=5,
-                                  interactive=True,
-                                  metersize=250,
-                                  meterthickness=15,
-                                  amounttotal=250,
-                                  amountused=160,
-                                  textright="Cm")
+        # height selector
+        
+        #making func for increase height arrow
+        def increase_height():
+            height =  self.height_meter.amountusedvar.get()
+            if height < 250:
+                height += 1
+            self.height_meter.amountusedvar.set(height)
+        
+        
+        #making func for decrease height arrow
+        def decrease_height():
+            height = self.height_meter.amountusedvar.get()
+            if height < 250:    
+                height -= 1
+            self.height_meter.amountusedvar.set(height)
+            
+        
+        self.height_meter = Meter(
+            self.main_frame,
+            subtext="Height",
+            subtextfont="roboto 20 bold",
+            metertype=SEMI,
+            stripethickness=5,
+            interactive=True,
+            metersize=250,
+            meterthickness=15,
+            amounttotal=250,
+            amountused=160,
+            textright="Cm",
+        )
         self.up_arrow_img_path = get_path(r"assets\up_arrow.png")
         self.up_arrow_img = PhotoImage(file=self.up_arrow_img_path)
         self.down_arrow_img_path = get_path(r"assets\down_arrow.png")
         self.down_arrow_img = PhotoImage(file=self.down_arrow_img_path)
-        self.increase_height_butt = Button(self.main_frame,image=self.up_arrow_img, style="link.TButton")
-        self.decrees_height_butt = Button(self.main_frame,image=self.down_arrow_img, style="link.TButton")
-        
-        
-        #start weight/date
-        self.start_wight_meter = Meter(self.main_frame,
-                                  subtext="Start Weight",
-                                  subtextfont="roboto 20 bold",
-                                  metertype=SEMI,
-                                  stripethickness=5,
-                                  interactive=True,
-                                  metersize=300,
-                                  meterthickness=15,
-                                  amounttotal=160,
-                                  amountused=80,
-                                  textright="KG")
-        
-        
+        self.increase_height_butt = Button(
+            self.main_frame, image=self.up_arrow_img, style="link.TButton",command=increase_height
+        )
+        self.decrees_height_butt = Button(
+            self.main_frame, image=self.down_arrow_img, style="link.TButton",command=decrease_height
+        )
+
+        # start weight/date
+        self.start_wight_meter = Meter(
+            self.main_frame,
+            subtext="Start Weight",
+            subtextfont="roboto 20 bold",
+            metertype=SEMI,
+            stripethickness=5,
+            interactive=True,
+            metersize=300,
+            meterthickness=15,
+            amounttotal=160,
+            amountused=80,
+            textright="KG",
+        )
+
         self.start_date = ttk.DateEntry(self.main_frame)
-        
-        
-        #target weight/date
-        self.target_wight_meter = Meter(self.main_frame,
-                                  subtext="Target Weight",
-                                  subtextfont="roboto 20 bold",
-                                  metertype=SEMI,
-                                  stripethickness=5,
-                                  interactive=True,
-                                  metersize=300,
-                                  meterthickness=15,
-                                  amounttotal=160,
-                                  amountused=80,
-                                  textright="KG")
+
+        # target weight/date
+        self.target_wight_meter = Meter(
+            self.main_frame,
+            subtext="Target Weight",
+            subtextfont="roboto 20 bold",
+            metertype=SEMI,
+            stripethickness=5,
+            interactive=True,
+            metersize=300,
+            meterthickness=15,
+            amounttotal=160,
+            amountused=80,
+            textright="KG",
+        )
 
         self.target_date = ttk.DateEntry(self.main_frame)
-        
-        #styling the sign up butt
+
+        # styling the sign up butt
         self.sign_up_style = ttk.Style()
-        self.sign_up_style.configure('sign_up.TButton', font=("roboto", 25))
-        #sign up button
-        
-        self.sign_up_butt = Button(self.main_frame,text="Sign up",style='sign_up.TButton',width=8,command=self.save_info)
-    
+        self.sign_up_style.configure("sign_up.TButton", font=("roboto", 25))
+        # sign up button
+
+        self.sign_up_butt = Button(
+            self.main_frame,
+            text="Sign up",
+            style="sign_up.TButton",
+            width=8,
+            command=self.save_info,
+        )
+
     def create_layout(self):
-        self.welcome.grid(column=1,columnspan=2,row=1)
-        #packing the name_entry
+        self.welcome.grid(column=1, columnspan=2, row=1)
+        # packing the name_entry
         self.name_entry_label.pack(side=LEFT)
         self.name_entry.pack(side=LEFT)
-        self.name_entry_frame.grid(column=1,row=2,padx=10,pady=10)
-        #packing the last_name_entry
+        self.name_entry_frame.grid(column=1, row=2, padx=10, pady=10)
+        # packing the last_name_entry
         self.last_name_entry_label.pack(side=LEFT)
         self.last_name_entry.pack(side=LEFT)
-        self.last_name_entry_frame.grid(column=2,row=2,padx=10,pady=10)        
-        
-        #packing date of birth
+        self.last_name_entry_frame.grid(column=2, row=2, padx=10, pady=10)
+
+        # packing date of birth
         self.date_of_birth_label.pack(side=LEFT)
-        self.date_of_birth_entry.pack(side=RIGHT,padx=10)
-        self.date_of_birth_frame.grid(column=1,row=3)
-        
-        #packing gender combobox
+        self.date_of_birth_entry.pack(side=RIGHT, padx=10)
+        self.date_of_birth_frame.grid(column=1, row=3)
+
+        # packing gender combobox
         self.gender_label.pack(side=LEFT)
         self.gender_combobox.pack(side=RIGHT)
-        self.gender_frame.grid(column=2,row=3)
-        
-        #packing height input
-        self.height_meter.grid(column=1,row=4,columnspan=2)
-        self.increase_height_butt.grid(column=2,row=4)
-        self.decrees_height_butt.grid(column=1,row=4)
-        
-        
-        #pack start weight and start date
-        self.start_wight_meter.grid(column=1,row=5)
-        self.start_date.grid(column=1,row=5,sticky=S)
-        
-        #pack target weight and start date
-        self.target_wight_meter.grid(column=2,row=5)
-        self.target_date.grid(column=2,row=5,sticky=S)
-        
-        #pack sign up butt
-        self.sign_up_butt.grid(column=1,row=6,columnspan=2)
-        
-        #packing the main_frame
+        self.gender_frame.grid(column=2, row=3)
+
+        # packing height input
+        self.height_meter.grid(column=1, row=4, columnspan=2)
+        self.increase_height_butt.grid(column=2, row=4)
+        self.decrees_height_butt.grid(column=1, row=4)
+
+        # pack start weight and start date
+        self.start_wight_meter.grid(column=1, row=5)
+        self.start_date.grid(column=1, row=5, sticky=S)
+
+        # pack target weight and start date
+        self.target_wight_meter.grid(column=2, row=5)
+        self.target_date.grid(column=2, row=5, sticky=S)
+
+        # pack sign up butt
+        self.sign_up_butt.grid(column=1, row=6, columnspan=2)
+
+        # packing the main_frame
         self.main_frame.pack()
-        
-        
-        
-    #saving sign up info in a csv file
+
+    # saving sign up info in a csv file
     def save_info(self):
-        #storing the data in a dict
-        self.user_data = {"name":self.name_entry_stringvar.get(),
-                          "last_name":self.last_name_entry_stringvar.get(),
-                          "date of birth":self.date_of_birth_entry.entry.get(),
-                          "gender":self.gender_combobox_stringvar.get(),
-                          "height":self.height_meter.amountusedvar.get(),
-                          "start weight":self.start_wight_meter.amountusedvar.get(),
-                          "target weight":self.target_wight_meter.amountusedvar.get(),
-                          "start date":self.start_date.entry.get(),
-                          "target date":self.target_date.entry.get(),
-                          }
-        self.user_info_df = pd.DataFrame(self.user_data,index=[0])
+        # storing the data in a dict
+        self.user_data = {
+            "name": self.name_entry_stringvar.get().capitalize(),
+            "last_name": self.last_name_entry_stringvar.get().capitalize(),
+            "date of birth": self.date_of_birth_entry.entry.get(),
+            "gender": self.gender_combobox_stringvar.get(),
+            "height": self.height_meter.amountusedvar.get(),
+            "start weight": self.start_wight_meter.amountusedvar.get(),
+            "target weight": self.target_wight_meter.amountusedvar.get(),
+            "start date": self.start_date.entry.get(),
+            "target date": self.target_date.entry.get(),
+        }
+        self.user_info_df = pd.DataFrame(self.user_data, index=[0])
         self.user_info_df.to_csv(get_path(r"data\user_info.csv"))
         self.destroy()
-    
-    
-        
-        
-        
-        
+
+
 # creating the main app
 class App(ttk.Window):
     def __init__(self):
@@ -233,7 +292,7 @@ class App(ttk.Window):
         # layout\widgets
         self.topbar = TopBar(self)
         self.mainframe = MainFrame(self)
-        
+
         # run
         self.mainloop()
 
@@ -257,7 +316,7 @@ class TopBar(Frame):
 
     def create_widgets(self):
         # user info button
-        #getting the path for user butt img
+        # getting the path for user butt img
         self.user_img_path = get_path(r"assets\user.png")
         self.user_img = PhotoImage(file=self.user_img_path)
         self.user_button = Button(self, image=self.user_img, style="link.TButton")
@@ -275,13 +334,13 @@ class TopBar(Frame):
         )
 
         # editing user info button
-        #getting the path for user butt img
+        # getting the path for user butt img
         self.edit_img_path = get_path(r"assets\edit.png")
         self.edit_img = PhotoImage(file=self.edit_img_path)
         self.edit_button = Button(self, image=self.edit_img, style="link.TButton")
 
         # user switch button
-        #getting the path for user butt img
+        # getting the path for user butt img
         self.switch_user_img_path = get_path(r"assets\switch_user.png")
         self.switch_user_img = PhotoImage(file=self.switch_user_img_path)
         self.switch_user_button = Button(
@@ -289,7 +348,7 @@ class TopBar(Frame):
         )
 
         # setting button
-        #getting the path for user butt img
+        # getting the path for user butt img
         self.setting_img_path = get_path(r"assets\setting.png")
         self.setting_img = PhotoImage(file=self.setting_img_path)
         self.setting_button = Button(self, image=self.setting_img, style="link.TButton")
@@ -628,9 +687,9 @@ class MainFrame(Frame):
             self.grid(column=3, row=2, sticky=NSEW)
 
         def create_widgets(self):
-            #determining the font size for the table
+            # determining the font size for the table
             default_font = nametofont("TkDefaultFont")
-            default_font.configure(size=14,weight='bold')
+            default_font.configure(size=14, weight="bold")
             self.coldata = [
                 {"text": "weight", "stretch": False},
                 {"text": "lost", "stretch": False},
@@ -689,4 +748,3 @@ class MainFrame(Frame):
 
 if __name__ == "__main__":
     main()
-
