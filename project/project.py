@@ -44,6 +44,14 @@ def validate_name(input):
     else:
         return True
 
+def load_user_data():
+    try:
+        #returning the data
+        return pd.read_csv(get_path(r"data\user_info.csv"))
+    except FileNotFoundError:
+        pass
+
+
 
 # creating the sign up page
 class SignUp(ttk.Window):
@@ -281,7 +289,7 @@ class SignUp(ttk.Window):
             "target date": self.target_date.entry.get(),
         }
         self.user_info_df = pd.DataFrame(self.user_data, index=[0])
-        self.user_info_df.to_csv(get_path(r"data\user_info.csv"))
+        self.user_info_df.to_csv(get_path(r"data\user_info.csv"),index=False)
         self.destroy()
 
 
@@ -324,15 +332,21 @@ class TopBar(Frame):
         self.user_img_path = get_path(r"assets\user.png")
         self.user_img = PhotoImage(file=self.user_img_path)
         self.user_button = Button(self, image=self.user_img, style="link.TButton")
-
+        
+        #user info
+        user_info = load_user_data()
+        
+        self.name = user_info["name"].to_string(index=False)
+        self.last_name = user_info["last_name"].to_string(index=False)
+        self.height = user_info["height"].to_string(index=False)
         # user name text
-        self.name = ttk.StringVar(value="Arshia Sotoode")
+        self.name = ttk.StringVar(value=f"{self.name} {self.last_name}")
         self.user_name = Label(
             self, textvariable=self.name, font="roboto 25 underline bold"
         )
 
         # user height text
-        self.height = ttk.StringVar(value="189cm")
+        self.height = ttk.StringVar(value=f"{self.height} Cm")
         self.user_height = Label(
             self, textvariable=self.height, font="roboto 12 underline"
         )
@@ -381,7 +395,7 @@ class MainFrame(Frame):
         self.table_frame = self.TableFrame(self)
         self.plot_frame = self.PlotFrame(self)
         self.pack(expand=True, fill=BOTH)
-
+    
     def grid_main_frame(self):
         # creating the grid tables
         self.columnconfigure(index=1, weight=1, uniform="a")
@@ -390,6 +404,17 @@ class MainFrame(Frame):
         self.rowconfigure(index=1, weight=1, uniform="a")
         self.rowconfigure(index=2, weight=1, uniform="a")
 
+    #making a function to load/update the data
+    def update_data(self):
+        #check if data file exists and open it
+        try:
+            #returning the data
+            self.data =  pd.read_csv(get_path(r"data\main_data.csv"))
+        except FileNotFoundError:
+            pass
+            
+        
+        
     class TimePercentFrame(Frame):
         def __init__(self, parent):
             super().__init__(parent)
@@ -860,7 +885,8 @@ class WeightEntry(ttk.Toplevel):
         self.save_butt.pack(expand=TRUE)
 
     # saving the info to the csv file
-    def save_data(self): ...
+    def save_data(self):
+        ...
 
 
 if __name__ == "__main__":
