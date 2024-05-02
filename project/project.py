@@ -46,11 +46,10 @@ def validate_name(input):
 
 def load_user_data():
     try:
-        #returning the data
+        # returning the data
         return pd.read_csv(get_path(r"data\user_info.csv"))
     except FileNotFoundError:
         pass
-
 
 
 # creating the sign up page
@@ -289,7 +288,7 @@ class SignUp(ttk.Window):
             "target date": self.target_date.entry.get(),
         }
         self.user_info_df = pd.DataFrame(self.user_data, index=[0])
-        self.user_info_df.to_csv(get_path(r"data\user_info.csv"),index=False)
+        self.user_info_df.to_csv(get_path(r"data\user_info.csv"), index=False)
         self.destroy()
 
 
@@ -332,10 +331,10 @@ class TopBar(Frame):
         self.user_img_path = get_path(r"assets\user.png")
         self.user_img = PhotoImage(file=self.user_img_path)
         self.user_button = Button(self, image=self.user_img, style="link.TButton")
-        
-        #user info
+
+        # user info
         user_info = load_user_data()
-        
+
         self.name = user_info["name"].to_string(index=False)
         self.last_name = user_info["last_name"].to_string(index=False)
         self.height = user_info["height"].to_string(index=False)
@@ -395,7 +394,7 @@ class MainFrame(Frame):
         self.table_frame = self.TableFrame(self)
         self.plot_frame = self.PlotFrame(self)
         self.pack(expand=True, fill=BOTH)
-    
+
     def grid_main_frame(self):
         # creating the grid tables
         self.columnconfigure(index=1, weight=1, uniform="a")
@@ -404,17 +403,125 @@ class MainFrame(Frame):
         self.rowconfigure(index=1, weight=1, uniform="a")
         self.rowconfigure(index=2, weight=1, uniform="a")
 
-    #making a function to load/update the data
+    # making a function to load/update the data
     def update_data(self):
-        #check if data file exists and open it
+        # check if data file exists and open it
         try:
-            #returning the data
-            self.data =  pd.read_csv(get_path(r"data\main_data.csv"))
+            # returning the data
+            self.data = pd.read_csv(get_path(r"data\main_data.csv"))
         except FileNotFoundError:
             pass
-            
-        
-        
+
+    # creating the weight entry pop up window
+    class WeightEntry(ttk.Toplevel):
+        def __init__(self):
+            super().__init__("litera")
+            # main-setup
+            self.title("Weight Entry")
+            self.geometry("500x550")
+            self.resizable(False, False)
+            self.attributes("-topmost", 1)
+
+            # create/pack widgets
+            self.create_widgets()
+            self.create_layout()
+
+        # creating the widgets
+        def create_widgets(self):
+            # enter weight label
+            self.enter_weight_label = Label(
+                self, text="Please Enter Your Weight", font="roboto 25 bold"
+            )
+
+            # creating the weight entry meter with increase and decrease arrows
+            self.enter_weight_frame = Frame(self)
+
+            # griding the frame
+            self.enter_weight_frame.grid_columnconfigure(index=1, weight=1, uniform="a")
+            self.enter_weight_frame.grid_columnconfigure(index=2, weight=5, uniform="a")
+            self.enter_weight_frame.grid_columnconfigure(index=3, weight=1, uniform="a")
+            self.enter_weight_frame.grid_rowconfigure(index=1, weight=1, uniform="a")
+
+            # loading the images
+            self.up_arrow_img_path = get_path(r"assets\up_arrow.png")
+            self.up_arrow_img = PhotoImage(file=self.up_arrow_img_path)
+            self.down_arrow_img_path = get_path(r"assets\down_arrow.png")
+            self.down_arrow_img = PhotoImage(file=self.down_arrow_img_path)
+
+            # making func for increase weight arrow
+            def increase_weight():
+                weight = self.weight_meter.amountusedvar.get()
+                if weight < 180:
+                    weight += 1
+                self.weight_meter.amountusedvar.set(weight)
+
+            # making func for decrease weight arrow
+            def decrease_weight():
+                weight = self.weight_meter.amountusedvar.get()
+                if weight > 0:
+                    weight -= 1
+                self.weight_meter.amountusedvar.set(weight)
+
+            # creating the buttons
+            self.increase_weight_butt = Button(
+                self.enter_weight_frame,
+                image=self.up_arrow_img,
+                style="link.TButton",
+                command=increase_weight,
+            )
+            self.decrease_weight_butt = Button(
+                self.enter_weight_frame,
+                image=self.down_arrow_img,
+                style="link.TButton",
+                command=decrease_weight,
+            )
+
+            # creating the weight meter
+            self.weight_meter = Meter(
+                self.enter_weight_frame,
+                subtext="Weightt",
+                subtextfont="roboto 20 bold",
+                metertype=SEMI,
+                stripethickness=5,
+                interactive=True,
+                metersize=300,
+                meterthickness=15,
+                amounttotal=180,
+                amountused=70,
+                textright="Kg",
+            )
+
+            # create date entry
+            self.date = ttk.DateEntry(self)
+
+            # styling save button
+            self.sign_up_style = ttk.Style()
+            self.sign_up_style.configure("save.TButton", font=("roboto", 25))
+            # create save button
+            self.save_butt = Button(
+                self, text="Save", style="save.TButton", width=7, command=self.save_data
+            )
+
+        # packing the widgets
+        def create_layout(self):
+            # packing enter weight label
+            self.enter_weight_label.pack(side=TOP)
+
+            # packing weight meter and arrows
+            self.decrease_weight_butt.grid(column=1, row=1)
+            self.weight_meter.grid(column=2, row=1)
+            self.increase_weight_butt.grid(column=3, row=1)
+            self.enter_weight_frame.pack(side=TOP, pady=25)
+
+            # packing date entry
+            self.date.pack(side=TOP, expand=True)
+
+            # packing save button
+            self.save_butt.pack(expand=TRUE)
+
+        # saving the info to the csv file
+        def save_data(self): ...
+
     class TimePercentFrame(Frame):
         def __init__(self, parent):
             super().__init__(parent)
@@ -635,6 +742,10 @@ class MainFrame(Frame):
             self.rowconfigure(1, weight=1, uniform="a")
             self.rowconfigure(2, weight=1, uniform="a")
 
+        #opening the weight entry popup
+        def open_weight_entry(self):
+            self.weight_entry = MainFrame.WeightEntry()
+
         def create_widgets(self):
             # loading the images of the two cats and loading the images
             self.cat_1_img_path = get_path(r"assets\left_cat.png")
@@ -686,7 +797,7 @@ class MainFrame(Frame):
                 self,
                 image=self.enter_butt_img,
                 style="link.TButton",
-                command=WeightEntry,
+                command=self.open_weight_entry,
             )
 
         def create_layout(self):
@@ -775,118 +886,6 @@ class MainFrame(Frame):
         def create_layout(self):
             # placing the canvas
             self.canvas.get_tk_widget().pack()
-
-
-# creating the weight entry pop up window
-class WeightEntry(ttk.Toplevel):
-    def __init__(self):
-        super().__init__("litera")
-        # main-setup
-        self.title("Weight Entry")
-        self.geometry("500x550")
-        self.resizable(False, False)
-        self.attributes("-topmost", 1)
-
-        # create/pack widgets
-        self.create_widgets()
-        self.create_layout()
-
-    # creating the widgets
-    def create_widgets(self):
-        # enter weight label
-        self.enter_weight_label = Label(
-            self, text="Please Enter Your Weight", font="roboto 25 bold"
-        )
-
-        # creating the weight entry meter with increase and decrease arrows
-        self.enter_weight_frame = Frame(self)
-
-        # griding the frame
-        self.enter_weight_frame.grid_columnconfigure(index=1, weight=1, uniform="a")
-        self.enter_weight_frame.grid_columnconfigure(index=2, weight=5, uniform="a")
-        self.enter_weight_frame.grid_columnconfigure(index=3, weight=1, uniform="a")
-        self.enter_weight_frame.grid_rowconfigure(index=1, weight=1, uniform="a")
-
-        # loading the images
-        self.up_arrow_img_path = get_path(r"assets\up_arrow.png")
-        self.up_arrow_img = PhotoImage(file=self.up_arrow_img_path)
-        self.down_arrow_img_path = get_path(r"assets\down_arrow.png")
-        self.down_arrow_img = PhotoImage(file=self.down_arrow_img_path)
-
-        # making func for increase weight arrow
-        def increase_weight():
-            weight = self.weight_meter.amountusedvar.get()
-            if weight < 180:
-                weight += 1
-            self.weight_meter.amountusedvar.set(weight)
-
-        # making func for decrease weight arrow
-        def decrease_weight():
-            weight = self.weight_meter.amountusedvar.get()
-            if weight > 0:
-                weight -= 1
-            self.weight_meter.amountusedvar.set(weight)
-
-        # creating the buttons
-        self.increase_weight_butt = Button(
-            self.enter_weight_frame,
-            image=self.up_arrow_img,
-            style="link.TButton",
-            command=increase_weight,
-        )
-        self.decrease_weight_butt = Button(
-            self.enter_weight_frame,
-            image=self.down_arrow_img,
-            style="link.TButton",
-            command=decrease_weight,
-        )
-
-        # creating the weight meter
-        self.weight_meter = Meter(
-            self.enter_weight_frame,
-            subtext="Weightt",
-            subtextfont="roboto 20 bold",
-            metertype=SEMI,
-            stripethickness=5,
-            interactive=True,
-            metersize=300,
-            meterthickness=15,
-            amounttotal=180,
-            amountused=70,
-            textright="Kg",
-        )
-
-        # create date entry
-        self.date = ttk.DateEntry(self)
-
-        # styling save button
-        self.sign_up_style = ttk.Style()
-        self.sign_up_style.configure("save.TButton", font=("roboto", 25))
-        # create save button
-        self.save_butt = Button(
-            self, text="Save", style="save.TButton", width=7, command=self.save_data
-        )
-
-    # packing the widgets
-    def create_layout(self):
-        # packing enter weight label
-        self.enter_weight_label.pack(side=TOP)
-
-        # packing weight meter and arrows
-        self.decrease_weight_butt.grid(column=1, row=1)
-        self.weight_meter.grid(column=2, row=1)
-        self.increase_weight_butt.grid(column=3, row=1)
-        self.enter_weight_frame.pack(side=TOP, pady=25)
-
-        # packing date entry
-        self.date.pack(side=TOP, expand=True)
-
-        # packing save button
-        self.save_butt.pack(expand=TRUE)
-
-    # saving the info to the csv file
-    def save_data(self):
-        ...
 
 
 if __name__ == "__main__":
