@@ -282,6 +282,10 @@ class SignUp(ttk.Window):
         }
         self.user_info_df = pd.DataFrame(self.user_data, index=[0])
         self.user_info_df.to_csv(get_path(r"data\user_info.csv"), index=False)
+        #creating the main data file
+        self.main_data= self.user_info_df.filter(items=["start weight", "start date"])
+        self.main_data.to_csv(get_path(r"data\main_data.csv"),index=False)
+        #closing the sign up window
         self.destroy()
 
 
@@ -405,24 +409,9 @@ class App(ttk.Window):
             self.rowconfigure(index=1, weight=1, uniform="a")
             self.rowconfigure(index=2, weight=1, uniform="a")
 
-        # making a function to load/update the data
-        def update_data(self):
-            # check if data file exists and open it
-            try:
-                # returning the data
-                self.data = pd.read_csv(get_path(r"data\main_data.csv"))
-            except FileNotFoundError:
-                pass
-
         # loading data
         def load_data(self):
-            try:
-                MainFrame.data = pd.read_csv(get_path(r"data\main_data.csv"))
-            except FileNotFoundError:
-                # creating the data file
-                with open((get_path(r"data\main_data.csv")), "w") as _:
-                    pass
-                self.load_data()
+            self.data = pd.read_csv(get_path(r"data\main_data.csv"))
 
         # creating the weight entry pop up window
         class WeightEntry(ttk.Toplevel):

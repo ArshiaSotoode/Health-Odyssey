@@ -3,3 +3,4 @@ project/main_no_color.py
 __pycache__/t.cpython-310.pyc
 t.py
 project/data/user_info.csv
+project/data/main_data.csv
