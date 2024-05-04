@@ -45,14 +45,6 @@ def validate_name(input):
         return True
 
 
-def load_user_data():
-    try:
-        # returning the data
-        return pd.read_csv(get_path(r"data\user_info.csv"))
-    except FileNotFoundError:
-        pass
-
-
 # creating the sign up page
 class SignUp(ttk.Window):
     def __init__(self):
@@ -308,6 +300,13 @@ class App(ttk.Window):
         # run
         self.mainloop()
 
+    # loading the user data
+    def load_user_data():
+        try:
+            # returning the data
+            return pd.read_csv(get_path(r"data\user_info.csv"))
+        except FileNotFoundError:
+            pass
 
     # creating the top bar
     class TopBar(Frame):
@@ -334,7 +333,7 @@ class App(ttk.Window):
             self.user_button = Button(self, image=self.user_img, style="link.TButton")
 
             # user info
-            user_info = load_user_data()
+            user_info = App.load_user_data()
 
             self.name = user_info["name"].to_string(index=False)
             self.last_name = user_info["last_name"].to_string(index=False)
@@ -369,7 +368,9 @@ class App(ttk.Window):
             # getting the path for user butt img
             self.setting_img_path = get_path(r"assets\setting.png")
             self.setting_img = PhotoImage(file=self.setting_img_path)
-            self.setting_button = Button(self, image=self.setting_img, style="link.TButton")
+            self.setting_button = Button(
+                self, image=self.setting_img, style="link.TButton"
+            )
 
         def create_layout(self):
             # placing the widgets
@@ -380,7 +381,7 @@ class App(ttk.Window):
             self.switch_user_button.pack(side=LEFT, padx=5, pady=10)
             self.setting_button.pack(side=RIGHT, padx=10, pady=10)
 
-
+    # creating the main frame
     class MainFrame(Frame):
         def __init__(self, parent):
             super().__init__(parent)
@@ -403,7 +404,7 @@ class App(ttk.Window):
             self.columnconfigure(index=3, weight=1, uniform="a")
             self.rowconfigure(index=1, weight=1, uniform="a")
             self.rowconfigure(index=2, weight=1, uniform="a")
-            
+
         # making a function to load/update the data
         def update_data(self):
             # check if data file exists and open it
@@ -413,16 +414,16 @@ class App(ttk.Window):
             except FileNotFoundError:
                 pass
 
-        #loading data
+        # loading data
         def load_data(self):
-            try:    
-                MainFrame.data = pd.read_csv(get_path(r"data\main_data.csv"))        
+            try:
+                MainFrame.data = pd.read_csv(get_path(r"data\main_data.csv"))
             except FileNotFoundError:
-                #creating the data file
-                with open((get_path(r"data\main_data.csv")),"w") as _:
+                # creating the data file
+                with open((get_path(r"data\main_data.csv")), "w") as _:
                     pass
                 self.load_data()
-                    
+
         # creating the weight entry pop up window
         class WeightEntry(ttk.Toplevel):
             def __init__(self, parent):
@@ -449,10 +450,18 @@ class App(ttk.Window):
                 self.enter_weight_frame = Frame(self)
 
                 # griding the frame
-                self.enter_weight_frame.grid_columnconfigure(index=1, weight=1, uniform="a")
-                self.enter_weight_frame.grid_columnconfigure(index=2, weight=5, uniform="a")
-                self.enter_weight_frame.grid_columnconfigure(index=3, weight=1, uniform="a")
-                self.enter_weight_frame.grid_rowconfigure(index=1, weight=1, uniform="a")
+                self.enter_weight_frame.grid_columnconfigure(
+                    index=1, weight=1, uniform="a"
+                )
+                self.enter_weight_frame.grid_columnconfigure(
+                    index=2, weight=5, uniform="a"
+                )
+                self.enter_weight_frame.grid_columnconfigure(
+                    index=3, weight=1, uniform="a"
+                )
+                self.enter_weight_frame.grid_rowconfigure(
+                    index=1, weight=1, uniform="a"
+                )
 
                 # loading the images
                 self.up_arrow_img_path = get_path(r"assets\up_arrow.png")
@@ -511,7 +520,11 @@ class App(ttk.Window):
                 self.sign_up_style.configure("save.TButton", font=("roboto", 25))
                 # create save button
                 self.save_butt = Button(
-                    self, text="Save", style="save.TButton", width=7, command=self.save_data
+                    self,
+                    text="Save",
+                    style="save.TButton",
+                    width=7,
+                    command=self.save_data,
                 )
 
             # packing the widgets
@@ -570,7 +583,9 @@ class App(ttk.Window):
                 self.total_time_frame = Frame(self)
                 self.tot_time = ttk.StringVar(value="37 days")
                 self.total_time = Label(
-                    self.total_time_frame, textvariable=self.tot_time, font="roboto 15 bold"
+                    self.total_time_frame,
+                    textvariable=self.tot_time,
+                    font="roboto 15 bold",
                 )
                 self.total_time_lable = Label(
                     self.total_time_frame, text="total time", font="roboto 12"
@@ -658,7 +673,9 @@ class App(ttk.Window):
                 self.goal_weight = Label(
                     self.gw_frame, textvariable=self.gw, font="roboto 15 bold"
                 )
-                self.gw_lable = Label(self.gw_frame, text="Goal weight", font="roboto 12")
+                self.gw_lable = Label(
+                    self.gw_frame, text="Goal weight", font="roboto 12"
+                )
 
             def create_layout(self):
                 # placing the widgets
@@ -889,7 +906,9 @@ class App(ttk.Window):
                 self.fig_1 = Figure(figsize=(10, 10), layout="constrained")
                 self.plot = self.fig_1.add_subplot()
                 sns.lineplot(
-                    y=self.revenue_data["amount"], x=self.revenue_data["date"], ax=self.plot
+                    y=self.revenue_data["amount"],
+                    x=self.revenue_data["date"],
+                    ax=self.plot,
                 )
                 # make the x axis(dates) more elegant and human readable
                 self.fig_1.autofmt_xdate()
