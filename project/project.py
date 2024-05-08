@@ -297,6 +297,9 @@ class App(ttk.Window):
         self.title("Weight tracker")
         self.geometry("1600x900")
 
+        #load data
+        self.load_user_data()
+        
         # layout\widgets
         self.topbar = self.TopBar(self)
         self.mainframe = self.MainFrame(self)
@@ -305,12 +308,17 @@ class App(ttk.Window):
         self.mainloop()
 
     # loading the user data
-    def load_user_data():
+    def load_user_data(self):
         try:
-            # returning the data
-            return pd.read_csv(get_path(r"data\user_info.csv"))
+            App.user_info = pd.read_csv(get_path(r"data\user_info.csv"))
         except FileNotFoundError:
             pass
+    
+    def load_main_data(self):
+        try:
+            App.main_data = pd.read_csv(get_path(r"data\main_data.csv"))
+        except pd.errors.EmptyDataError:
+            App.main_data = pd.DataFrame()        
 
     # creating the top bar
     class TopBar(Frame):
@@ -336,12 +344,10 @@ class App(ttk.Window):
             self.user_img = PhotoImage(file=self.user_img_path)
             self.user_button = Button(self, image=self.user_img, style="link.TButton")
 
-            # user info
-            user_info = App.load_user_data()
 
-            self.name = user_info["name"].to_string(index=False)
-            self.last_name = user_info["last_name"].to_string(index=False)
-            self.height = user_info["height"].to_string(index=False)
+            self.name = App.user_info["name"].to_string(index=False)
+            self.last_name = App.user_info["last_name"].to_string(index=False)
+            self.height = App.user_info["height"].to_string(index=False)
             # user name text
             self.name = ttk.StringVar(value=f"{self.name} {self.last_name}")
             self.user_name = Label(
@@ -408,10 +414,6 @@ class App(ttk.Window):
             self.columnconfigure(index=3, weight=1, uniform="a")
             self.rowconfigure(index=1, weight=1, uniform="a")
             self.rowconfigure(index=2, weight=1, uniform="a")
-
-        # loading data
-        def load_data(self):
-            self.data = pd.read_csv(get_path(r"data\main_data.csv"))
 
         # creating the weight entry pop up window
         class WeightEntry(ttk.Toplevel):
