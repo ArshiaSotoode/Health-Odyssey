@@ -12,9 +12,11 @@ import seaborn as sns
 from tkinter.font import nametofont
 from os.path import exists
 from string import punctuation
+from datetime import date
 
 # file variables
 punctuation += " "
+DATE_FORMAT = "%Y-%m-%d"
 
 
 def main():
@@ -45,12 +47,9 @@ def validate_name(input):
         return True
 
 
-def load_user_data():
-    try:
-        # returning the data
-        return pd.read_csv(get_path(r"data\user_info.csv"))
-    except FileNotFoundError:
-        pass
+# returns the time percent passed
+def time_percent_past(elapsed_duration: int, total_duration: int) -> float:
+    return round((elapsed_duration / total_duration) * 100, 2)
 
 
 # creating the sign up page
@@ -118,7 +117,9 @@ class SignUp(ttk.Window):
 
         # input Date of birth
         self.date_of_birth_frame = Frame(self.main_frame)
-        self.date_of_birth_entry = ttk.DateEntry(self.date_of_birth_frame)
+        self.date_of_birth_entry = ttk.DateEntry(
+            self.date_of_birth_frame, dateformat=DATE_FORMAT
+        )
         self.date_of_birth_label = Label(
             self.date_of_birth_frame, text="Date of birth : ", font="roboto 15 bold"
         )
@@ -202,7 +203,7 @@ class SignUp(ttk.Window):
             textright="KG",
         )
 
-        self.start_date = ttk.DateEntry(self.main_frame)
+        self.start_date = ttk.DateEntry(self.main_frame, dateformat=DATE_FORMAT)
 
         # target weight/date
         self.target_wight_meter = Meter(
@@ -219,7 +220,7 @@ class SignUp(ttk.Window):
             textright="KG",
         )
 
-        self.target_date = ttk.DateEntry(self.main_frame)
+        self.target_date = ttk.DateEntry(self.main_frame, dateformat=DATE_FORMAT)
 
         # styling the sign up butt
         self.sign_up_style = ttk.Style()
@@ -290,6 +291,14 @@ class SignUp(ttk.Window):
         }
         self.user_info_df = pd.DataFrame(self.user_data, index=[0])
         self.user_info_df.to_csv(get_path(r"data\user_info.csv"), index=False)
+        # creating the main data file
+        self.main_data = self.user_info_df.filter(items=["start weight", "start date"])
+        # changing the columns names to match the main data file
+        self.main_data.rename(
+            columns={"start weight": "weights", "start date": "dates"}, inplace=True
+        )
+        self.main_data.to_csv(get_path(r"data\main_data.csv"), index=False)
+        # closing the sign up window
         self.destroy()
 
 
@@ -301,6 +310,11 @@ class App(ttk.Window):
         self.title("Weight tracker")
         self.geometry("1600x900")
 
+        # load data
+        self.load_user_data()
+        self.load_main_data()
+        self.process_dates()
+
         # layout\widgets
         self.topbar = self.TopBar(self)
         self.mainframe = self.MainFrame(self)
@@ -308,6 +322,44 @@ class App(ttk.Window):
         # run
         self.mainloop()
 
+    # loading the user data
+    @classmethod
+    def load_user_data(cls):
+        # loading the user data and change the date strings to date format
+        try:
+            cls.user_info = pd.read_csv(
+                get_path(
+                    r"data\user_info.csv",
+                ),
+                parse_dates=["date of birth", "start date", "target date"],
+            )
+        except FileNotFoundError:
+            pass
+
+    @classmethod
+    def load_main_data(cls):
+        try:
+            cls.main_data = pd.read_csv(
+                get_path(r"data\main_data.csv"), parse_dates=["dates"]
+            )
+        except pd.errors.EmptyDataError:
+            App.main_data = pd.DataFrame()
+
+    @classmethod
+    def process_dates(cls):
+        # get the total time
+        cls.total_time = (
+            App.user_info.at[0, "target date"] - App.user_info.at[0, "start date"]
+        ).days
+        # get the elapsed days
+        cls.today = date.today()
+        cls.elapsed_days = (
+            pd.to_datetime(cls.today) - App.user_info.at[0, "start date"]
+        ).days
+        # get the remaining days
+        cls.remaining_days = (
+            App.user_info.at[0, "target date"] - pd.to_datetime(cls.today)
+        ).days
 
     # creating the top bar
     class TopBar(Frame):
@@ -333,12 +385,9 @@ class App(ttk.Window):
             self.user_img = PhotoImage(file=self.user_img_path)
             self.user_button = Button(self, image=self.user_img, style="link.TButton")
 
-            # user info
-            user_info = load_user_data()
-
-            self.name = user_info["name"].to_string(index=False)
-            self.last_name = user_info["last_name"].to_string(index=False)
-            self.height = user_info["height"].to_string(index=False)
+            self.name = App.user_info["name"].to_string(index=False)
+            self.last_name = App.user_info["last_name"].to_string(index=False)
+            self.height = App.user_info["height"].to_string(index=False)
             # user name text
             self.name = ttk.StringVar(value=f"{self.name} {self.last_name}")
             self.user_name = Label(
@@ -369,7 +418,9 @@ class App(ttk.Window):
             # getting the path for user butt img
             self.setting_img_path = get_path(r"assets\setting.png")
             self.setting_img = PhotoImage(file=self.setting_img_path)
-            self.setting_button = Button(self, image=self.setting_img, style="link.TButton")
+            self.setting_button = Button(
+                self, image=self.setting_img, style="link.TButton"
+            )
 
         def create_layout(self):
             # placing the widgets
@@ -380,7 +431,7 @@ class App(ttk.Window):
             self.switch_user_button.pack(side=LEFT, padx=5, pady=10)
             self.setting_button.pack(side=RIGHT, padx=10, pady=10)
 
-
+    # creating the main frame
     class MainFrame(Frame):
         def __init__(self, parent):
             super().__init__(parent)
@@ -403,26 +454,7 @@ class App(ttk.Window):
             self.columnconfigure(index=3, weight=1, uniform="a")
             self.rowconfigure(index=1, weight=1, uniform="a")
             self.rowconfigure(index=2, weight=1, uniform="a")
-            
-        # making a function to load/update the data
-        def update_data(self):
-            # check if data file exists and open it
-            try:
-                # returning the data
-                self.data = pd.read_csv(get_path(r"data\main_data.csv"))
-            except FileNotFoundError:
-                pass
 
-        #loading data
-        def load_data(self):
-            try:    
-                MainFrame.data = pd.read_csv(get_path(r"data\main_data.csv"))        
-            except FileNotFoundError:
-                #creating the data file
-                with open((get_path(r"data\main_data.csv")),"w") as _:
-                    pass
-                self.load_data()
-                    
         # creating the weight entry pop up window
         class WeightEntry(ttk.Toplevel):
             def __init__(self, parent):
@@ -449,10 +481,18 @@ class App(ttk.Window):
                 self.enter_weight_frame = Frame(self)
 
                 # griding the frame
-                self.enter_weight_frame.grid_columnconfigure(index=1, weight=1, uniform="a")
-                self.enter_weight_frame.grid_columnconfigure(index=2, weight=5, uniform="a")
-                self.enter_weight_frame.grid_columnconfigure(index=3, weight=1, uniform="a")
-                self.enter_weight_frame.grid_rowconfigure(index=1, weight=1, uniform="a")
+                self.enter_weight_frame.grid_columnconfigure(
+                    index=1, weight=1, uniform="a"
+                )
+                self.enter_weight_frame.grid_columnconfigure(
+                    index=2, weight=5, uniform="a"
+                )
+                self.enter_weight_frame.grid_columnconfigure(
+                    index=3, weight=1, uniform="a"
+                )
+                self.enter_weight_frame.grid_rowconfigure(
+                    index=1, weight=1, uniform="a"
+                )
 
                 # loading the images
                 self.up_arrow_img_path = get_path(r"assets\up_arrow.png")
@@ -504,14 +544,18 @@ class App(ttk.Window):
                 )
 
                 # create date entry
-                self.date = ttk.DateEntry(self)
+                self.date = ttk.DateEntry(self, dateformat=DATE_FORMAT)
 
                 # styling save button
                 self.sign_up_style = ttk.Style()
                 self.sign_up_style.configure("save.TButton", font=("roboto", 25))
                 # create save button
                 self.save_butt = Button(
-                    self, text="Save", style="save.TButton", width=7, command=self.save_data
+                    self,
+                    text="Save",
+                    style="save.TButton",
+                    width=7,
+                    command=self.save_data,
                 )
 
             # packing the widgets
@@ -539,6 +583,7 @@ class App(ttk.Window):
                 super().__init__(parent)
                 # setup
                 self.grid(column=1, row=1, sticky=NSEW)
+                self.load_update_data()
                 self.create_grid()
                 self.create_widgets()
                 self.create_layout()
@@ -547,22 +592,44 @@ class App(ttk.Window):
                 # creating the grid tables
                 self.columnconfigure(1, weight=1, uniform="a")
                 self.columnconfigure(2, weight=1, uniform="a")
+                self.columnconfigure(3, weight=1, uniform="a")
                 self.rowconfigure(1, weight=10)
                 self.rowconfigure(2, weight=1)
 
+            def load_update_data(self):
+                # process total duration
+                self.total_duration_var = ttk.StringVar(
+                    value=str(App.total_time) + " days"
+                )
+                # process remaining days
+                self.remaining_duration_var = ttk.StringVar(
+                    value=str(App.remaining_days) + " days"
+                )
+                # past days
+                self.past_days_var = ttk.StringVar(
+                    value=str(App.elapsed_days) + " days"
+                )
+                # process rime passed in percentage
+                self.time_percent_var = ttk.DoubleVar(
+                    value=time_percent_past(
+                        elapsed_duration=App.elapsed_days,
+                        total_duration=App.total_time,
+                    )
+                )
+
             def create_widgets(self):
+
                 # creating the time percent meter
-                self.time_percent = 74
-                self.time_percent = Meter(
+
+                self.time_percent_meter = Meter(
                     self,
                     metertype=SEMI,
-                    amountused=self.time_percent,
+                    amountused=self.time_percent_var.get(),
                     subtext="Time",
                     textright="%",
                     subtextfont="roboto 20 bold",
                     subtextstyle=DARK,
                     stripethickness=10,
-                    interactive=True,
                     metersize=350,
                     meterthickness=30,
                 )
@@ -570,9 +637,11 @@ class App(ttk.Window):
                 self.total_time_frame = Frame(self)
                 self.tot_time = ttk.StringVar(value="37 days")
                 self.total_time = Label(
-                    self.total_time_frame, textvariable=self.tot_time, font="roboto 15 bold"
+                    self.total_time_frame,
+                    textvariable=self.total_duration_var,
+                    font="roboto 15 bold",
                 )
-                self.total_time_lable = Label(
+                self.total_time_label = Label(
                     self.total_time_frame, text="total time", font="roboto 12"
                 )
 
@@ -580,9 +649,11 @@ class App(ttk.Window):
                 self.days_past_frame = Frame(self)
                 self.past = ttk.IntVar(value=81)
                 self.days_past = Label(
-                    self.days_past_frame, textvariable=self.past, font="roboto 15 bold"
+                    self.days_past_frame,
+                    textvariable=self.past_days_var,
+                    font="roboto 15 bold",
                 )
-                self.days_past_lable = Label(
+                self.days_past_label = Label(
                     self.days_past_frame, text="Days past", font="roboto 12"
                 )
 
@@ -591,25 +662,25 @@ class App(ttk.Window):
                 self.remaining = ttk.IntVar(value=81)
                 self.days_remaining = Label(
                     self.days_remaining_frame,
-                    textvariable=self.remaining,
+                    textvariable=self.remaining_duration_var,
                     font="roboto 15 bold",
                 )
-                self.days_remaining_lable = Label(
+                self.days_remaining_label = Label(
                     self.days_remaining_frame, text="Days remaining", font="roboto 12"
                 )
 
             def create_layout(self):
                 # placing the widgets inside of frames and then placing frames
                 self.total_time.pack(side=TOP)
-                self.total_time_lable.pack(side=TOP)
+                self.total_time_label.pack(side=TOP)
                 self.days_past.pack(side=TOP)
-                self.days_past_lable.pack(side=TOP)
+                self.days_past_label.pack(side=TOP)
                 self.days_remaining.pack(side=TOP)
-                self.days_remaining_lable.pack(side=TOP)
-                self.time_percent.grid(column=1, row=1, columnspan=2)
+                self.days_remaining_label.pack(side=TOP)
+                self.time_percent_meter.grid(column=1, row=1, columnspan=3)
                 self.total_time_frame.grid(column=1, row=2)
                 self.days_past_frame.grid(column=2, row=2)
-                self.days_remaining_frame.grid(column=2, row=2)
+                self.days_remaining_frame.grid(column=3, row=2)
 
         class BMIFrame(Frame):
             def __init__(self, parent):
@@ -658,7 +729,9 @@ class App(ttk.Window):
                 self.goal_weight = Label(
                     self.gw_frame, textvariable=self.gw, font="roboto 15 bold"
                 )
-                self.gw_lable = Label(self.gw_frame, text="Goal weight", font="roboto 12")
+                self.gw_lable = Label(
+                    self.gw_frame, text="Goal weight", font="roboto 12"
+                )
 
             def create_layout(self):
                 # placing the widgets
@@ -889,7 +962,9 @@ class App(ttk.Window):
                 self.fig_1 = Figure(figsize=(10, 10), layout="constrained")
                 self.plot = self.fig_1.add_subplot()
                 sns.lineplot(
-                    y=self.revenue_data["amount"], x=self.revenue_data["date"], ax=self.plot
+                    y=self.revenue_data["amount"],
+                    x=self.revenue_data["date"],
+                    ax=self.plot,
                 )
                 # make the x axis(dates) more elegant and human readable
                 self.fig_1.autofmt_xdate()
