@@ -52,6 +52,11 @@ def time_percent_past(elapsed_duration: int, total_duration: int) -> float:
     return round((elapsed_duration / total_duration) * 100, 2)
 
 
+def calculate_BMI(weight: int, height: int) -> float:
+    BMI = weight / (height / 100) ** 2
+    return round(BMI, 2)
+
+
 # creating the sign up page
 class SignUp(ttk.Window):
     def __init__(self):
@@ -688,6 +693,7 @@ class App(ttk.Window):
                 # setup
                 # placing the frame inside of the main frame
                 self.grid(column=2, row=1, sticky=NSEW)
+                self.load_update_data()
                 self.create_grid()
                 self.create_widgets()
                 self.create_layout()
@@ -699,37 +705,54 @@ class App(ttk.Window):
                 self.rowconfigure(1, weight=10)
                 self.rowconfigure(2, weight=1)
 
+            def load_update_data(self):
+                self.BMI_var = ttk.DoubleVar(
+                    value=calculate_BMI(
+                        weight=App.main_data.at[-0, "weights"],
+                        height=App.user_info.at[0, "height"],
+                    )
+                )
+                # getting the last item in the main data weight column
+                self.current_weight_var = ttk.IntVar(
+                    value=App.main_data.at[-0, "weights"]
+                )
+
+                self.goal_weight_var = ttk.IntVar(
+                    value=App.user_info.at[0, "target weight"]
+                )
+
             def create_widgets(self):
                 # creating the BMI meter
-                self.BMI = 74
                 self.BMI_meter = Meter(
                     self,
                     metertype=SEMI,
-                    amountused=self.BMI,
+                    amountused=self.BMI_var.get(),
                     subtext="BMI",
                     subtextfont="roboto 20 bold",
                     subtextstyle=DARK,
                     stripethickness=10,
-                    interactive=True,
                     metersize=400,
                     meterthickness=30,
                 )
                 # creating the current weight frame and putting the current weight value and label inside
                 self.cw_frame = Frame(self)
-                self.cw = ttk.IntVar(value=87)
-                self.current_weight = Label(
-                    self.cw_frame, textvariable=self.cw, font="roboto 15 bold"
+                self.current_weight_label = Label(
+                    self.cw_frame,
+                    textvariable=self.current_weight_var,
+                    font="roboto 15 bold",
                 )
-                self.cw_lable = Label(
+                self.cw_label = Label(
                     self.cw_frame, text="Current weight", font="roboto 12"
                 )
                 # creating the goal weight frame and putting the goal weight value and label inside
                 self.gw_frame = Frame(self)
-                self.gw = ttk.IntVar(value=81)
-                self.goal_weight = Label(
-                    self.gw_frame, textvariable=self.gw, font="roboto 15 bold"
+
+                self.goal_weight_label = Label(
+                    self.gw_frame,
+                    textvariable=self.goal_weight_var,
+                    font="roboto 15 bold",
                 )
-                self.gw_lable = Label(
+                self.gw_label = Label(
                     self.gw_frame, text="Goal weight", font="roboto 12"
                 )
 
@@ -737,11 +760,11 @@ class App(ttk.Window):
                 # placing the widgets
                 self.BMI_meter.grid(column=1, row=1, columnspan=2)
 
-                self.current_weight.pack(side=TOP)
-                self.cw_lable.pack(side=TOP)
+                self.current_weight_label.pack(side=TOP)
+                self.cw_label.pack(side=TOP)
 
-                self.goal_weight.pack(side=TOP)
-                self.gw_lable.pack(side=TOP)
+                self.goal_weight_label.pack(side=TOP)
+                self.gw_label.pack(side=TOP)
 
                 self.cw_frame.grid(column=1, row=2)
                 self.gw_frame.grid(column=2, row=2)
