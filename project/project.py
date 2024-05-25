@@ -48,8 +48,8 @@ def validate_name(input):
 
 
 # returns the time percent passed
-def time_percent_past(elapsed_duration: int, total_duration: int) -> float:
-    return round((elapsed_duration / total_duration) * 100, 2)
+def give_percentage(elapsed: int, total: int) -> float:
+    return round((elapsed / total) * 100, 2)
 
 
 def calculate_BMI(weight: int, height: int) -> float:
@@ -319,6 +319,7 @@ class App(ttk.Window):
         self.load_user_data()
         self.load_main_data()
         self.process_dates()
+        self.process_wrights()
 
         # layout\widgets
         self.topbar = self.TopBar(self)
@@ -365,6 +366,18 @@ class App(ttk.Window):
         cls.remaining_days = (
             App.user_info.at[0, "target date"] - pd.to_datetime(cls.today)
         ).days
+
+    @classmethod
+    def process_wrights(cls):
+        cls.weight_lost = (
+            App.user_info.at[0, "start weight"] - App.main_data.at[-0, "weights"]
+        )
+        cls.weight_remaining = (
+            App.main_data.at[-0, "weights"] - App.user_info.at[0, "target weight"]
+        )
+        cls.weight_lost_total = (
+            App.user_info.at[0, "start weight"] - App.user_info.at[0, "target weight"]
+        )
 
     # creating the top bar
     class TopBar(Frame):
@@ -616,9 +629,9 @@ class App(ttk.Window):
                 )
                 # process rime passed in percentage
                 self.time_percent_var = ttk.DoubleVar(
-                    value=time_percent_past(
-                        elapsed_duration=App.elapsed_days,
-                        total_duration=App.total_time,
+                    value=give_percentage(
+                        elapsed=App.elapsed_days,
+                        total=App.total_time,
                     )
                 )
 
@@ -775,6 +788,7 @@ class App(ttk.Window):
                 # setup
                 # placing the frame inside of the main frame
                 self.grid(column=3, row=1, sticky=NSEW)
+                self.load_update_data()
                 self.create_grid()
                 self.create_widgets()
                 self.create_layout()
@@ -786,49 +800,58 @@ class App(ttk.Window):
                 self.rowconfigure(1, weight=10)
                 self.rowconfigure(2, weight=1)
 
+            def load_update_data(self):
+                self.lost_weight_var = ttk.StringVar(value=str(App.weight_lost) + " KG")
+                self.remaining_weight_var = ttk.StringVar(
+                    value=str(App.weight_remaining) + " KG"
+                )
+                self.progress_percent = ttk.DoubleVar(
+                    value=give_percentage(
+                        elapsed=App.weight_lost, total=App.weight_lost_total
+                    )
+                )
+
             def create_widgets(self):
                 # creating the progress percent meter
-                self.progress_percent = 74
-                self.progress_percent = Meter(
+                self.progress_percent_meter = Meter(
                     self,
                     metertype=SEMI,
-                    amountused=self.progress_percent,
+                    amountused=self.progress_percent.get(),
                     subtext="Progress",
                     textright="%",
                     subtextfont="roboto 20 bold",
                     subtextstyle=DARK,
                     stripethickness=10,
-                    interactive=True,
                     metersize=350,
                     meterthickness=30,
                 )
                 # creating the lost weight frame and putting the lost wight value and label inside
                 self.lost_frame = Frame(self)
-                self._lost = ttk.StringVar(value="16KG")
                 self.lost = Label(
-                    self.lost_frame, textvariable=self._lost, font="roboto 15 bold"
+                    self.lost_frame,
+                    textvariable=self.lost_weight_var,
+                    font="roboto 15 bold",
                 )
-                self.lost_lable = Label(self.lost_frame, text="Lost", font="roboto 12")
+                self.lost_label = Label(self.lost_frame, text="Lost", font="roboto 12")
 
                 # creating the remaining weight frame and putting the remaining wight value and label inside
                 self.remaining_frame = Frame(self)
-                self._remaining = ttk.StringVar(value="9KG")
                 self.remaining = Label(
                     self.remaining_frame,
-                    textvariable=self._remaining,
+                    textvariable=self.remaining_weight_var,
                     font="roboto 15 bold",
                 )
-                self.remaining_lable = Label(
+                self.remaining_label = Label(
                     self.remaining_frame, text="Remaining", font="roboto 12"
                 )
 
             def create_layout(self):
                 # placing the widgets
                 self.lost.pack(side=TOP)
-                self.lost_lable.pack(side=TOP)
+                self.lost_label.pack(side=TOP)
                 self.remaining.pack(side=TOP)
-                self.remaining_lable.pack(side=TOP)
-                self.progress_percent.grid(column=1, row=1, columnspan=2)
+                self.remaining_label.pack(side=TOP)
+                self.progress_percent_meter.grid(column=1, row=1, columnspan=2)
                 self.lost_frame.grid(column=1, row=2)
                 self.remaining_frame.grid(column=2, row=2)
 
