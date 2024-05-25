@@ -15,6 +15,7 @@ from string import punctuation
 
 # file variables
 punctuation += " "
+DATE_FORMAT = "%Y-%m-%d"
 
 
 def main():
@@ -110,7 +111,9 @@ class SignUp(ttk.Window):
 
         # input Date of birth
         self.date_of_birth_frame = Frame(self.main_frame)
-        self.date_of_birth_entry = ttk.DateEntry(self.date_of_birth_frame)
+        self.date_of_birth_entry = ttk.DateEntry(
+            self.date_of_birth_frame, dateformat=DATE_FORMAT
+        )
         self.date_of_birth_label = Label(
             self.date_of_birth_frame, text="Date of birth : ", font="roboto 15 bold"
         )
@@ -194,7 +197,7 @@ class SignUp(ttk.Window):
             textright="KG",
         )
 
-        self.start_date = ttk.DateEntry(self.main_frame)
+        self.start_date = ttk.DateEntry(self.main_frame, dateformat=DATE_FORMAT)
 
         # target weight/date
         self.target_wight_meter = Meter(
@@ -211,7 +214,7 @@ class SignUp(ttk.Window):
             textright="KG",
         )
 
-        self.target_date = ttk.DateEntry(self.main_frame)
+        self.target_date = ttk.DateEntry(self.main_frame, dateformat=DATE_FORMAT)
 
         # styling the sign up butt
         self.sign_up_style = ttk.Style()
@@ -282,10 +285,10 @@ class SignUp(ttk.Window):
         }
         self.user_info_df = pd.DataFrame(self.user_data, index=[0])
         self.user_info_df.to_csv(get_path(r"data\user_info.csv"), index=False)
-        #creating the main data file
-        self.main_data= self.user_info_df.filter(items=["start weight", "start date"])
-        self.main_data.to_csv(get_path(r"data\main_data.csv"),index=False)
-        #closing the sign up window
+        # creating the main data file
+        self.main_data = self.user_info_df.filter(items=["start weight", "start date"])
+        self.main_data.to_csv(get_path(r"data\main_data.csv"), index=False)
+        # closing the sign up window
         self.destroy()
 
 
@@ -297,9 +300,9 @@ class App(ttk.Window):
         self.title("Weight tracker")
         self.geometry("1600x900")
 
-        #load data
+        # load data
         self.load_user_data()
-        
+
         # layout\widgets
         self.topbar = self.TopBar(self)
         self.mainframe = self.MainFrame(self)
@@ -308,17 +311,19 @@ class App(ttk.Window):
         self.mainloop()
 
     # loading the user data
-    def load_user_data(self):
+    @classmethod
+    def load_user_data(cls):
         try:
-            App.user_info = pd.read_csv(get_path(r"data\user_info.csv"))
+            cls.user_info = pd.read_csv(get_path(r"data\user_info.csv"))
         except FileNotFoundError:
             pass
-    
-    def load_main_data(self):
+
+    @classmethod
+    def load_main_data(cls):
         try:
-            App.main_data = pd.read_csv(get_path(r"data\main_data.csv"))
+            cls.main_data = pd.read_csv(get_path(r"data\main_data.csv"))
         except pd.errors.EmptyDataError:
-            App.main_data = pd.DataFrame()        
+            App.main_data = pd.DataFrame()
 
     # creating the top bar
     class TopBar(Frame):
@@ -343,7 +348,6 @@ class App(ttk.Window):
             self.user_img_path = get_path(r"assets\user.png")
             self.user_img = PhotoImage(file=self.user_img_path)
             self.user_button = Button(self, image=self.user_img, style="link.TButton")
-
 
             self.name = App.user_info["name"].to_string(index=False)
             self.last_name = App.user_info["last_name"].to_string(index=False)
@@ -504,7 +508,7 @@ class App(ttk.Window):
                 )
 
                 # create date entry
-                self.date = ttk.DateEntry(self)
+                self.date = ttk.DateEntry(self, dateformat=DATE_FORMAT)
 
                 # styling save button
                 self.sign_up_style = ttk.Style()
