@@ -57,6 +57,11 @@ def calculate_BMI(weight: int, height: int) -> float:
     return round(BMI, 2)
 
 
+def calculate_body_fat_percentage(weight: int, age: int, height: int):
+    body_fat = (weight * 0.5) + (height * 0.09) + (0.094 * age) - 32
+    return round(body_fat, 2)
+
+
 # creating the sign up page
 class SignUp(ttk.Window):
     def __init__(self):
@@ -319,7 +324,7 @@ class App(ttk.Window):
         self.load_user_data()
         self.load_main_data()
         self.process_dates()
-        self.process_wrights()
+        self.process_weights()
 
         # layout\widgets
         self.topbar = self.TopBar(self)
@@ -353,12 +358,18 @@ class App(ttk.Window):
 
     @classmethod
     def process_dates(cls):
+        cls.today = date.today()
+        # get age
+        cls.user_age = round(
+            (pd.to_datetime(cls.today) - App.user_info.at[0, "date of birth"]).days
+            / 365
+        )
         # get the total time
         cls.total_time = (
             App.user_info.at[0, "target date"] - App.user_info.at[0, "start date"]
         ).days
         # get the elapsed days
-        cls.today = date.today()
+
         cls.elapsed_days = (
             pd.to_datetime(cls.today) - App.user_info.at[0, "start date"]
         ).days
@@ -368,7 +379,7 @@ class App(ttk.Window):
         ).days
 
     @classmethod
-    def process_wrights(cls):
+    def process_weights(cls):
         cls.weight_lost = (
             App.user_info.at[0, "start weight"] - App.main_data.at[-0, "weights"]
         )
@@ -378,6 +389,13 @@ class App(ttk.Window):
         cls.weight_lost_total = (
             App.user_info.at[0, "start weight"] - App.user_info.at[0, "target weight"]
         )
+        cls.average_daily_lost = (
+            (cls.main_data.at[-0, "dates"] - App.main_data.at[0, "dates"]).days
+            * cls.weight_lost_total
+            / 100
+        )
+
+        cls.average_weekly_lost = cls.average_daily_lost * 7
 
     # creating the top bar
     class TopBar(Frame):
@@ -860,6 +878,7 @@ class App(ttk.Window):
                 super().__init__(parent)
                 self.parent = parent
                 # setup
+                self.load_update_data()
                 self.create_grid()
                 self.create_widgets()
                 self.create_layout()
@@ -873,6 +892,21 @@ class App(ttk.Window):
                 self.columnconfigure(3, weight=1, uniform="a")
                 self.rowconfigure(1, weight=1, uniform="a")
                 self.rowconfigure(2, weight=1, uniform="a")
+
+            def load_update_data(self):
+                self.body_fat = calculate_body_fat_percentage(
+                    height=App.user_info.at[0, "height"],
+                    age=App.user_age,
+                    weight=App.main_data.at[-0, "weights"],
+                )
+                self.body_fat_var = ttk.StringVar(value=str(self.body_fat) + " %")
+
+                self.average_daily_lost_var = ttk.StringVar(
+                    value=str(App.average_daily_lost) + " KG"
+                )
+                self.average_weekly_lost_var = ttk.StringVar(
+                    value=str(App.average_weekly_lost) + " KG"
+                )
 
             # opening the weight entry popup
             def open_weight_entry(self):
@@ -890,10 +924,9 @@ class App(ttk.Window):
 
                 # creating the average daily lost frame and putting the average daily lost value and label inside
                 self.avg_day_lost_frame = Frame(self)
-                self.avg_day_lost = ttk.StringVar(value="0.25KG")
                 self.avg_daily_lost = Label(
                     self.avg_day_lost_frame,
-                    textvariable=self.avg_day_lost,
+                    textvariable=self.average_daily_lost_var,
                     font="roboto 15 bold",
                 )
                 self.avg_daily_lost_label = Label(
@@ -902,10 +935,9 @@ class App(ttk.Window):
 
                 # creating body fat percentage time frame and putting the body fat percentage value and label inside
                 self.body_fat_frame = Frame(self)
-                self.body_fat = ttk.StringVar(value="27%")
                 self.body_fat_percent = Label(
                     self.body_fat_frame,
-                    textvariable=self.body_fat,
+                    textvariable=self.body_fat_var,
                     font="roboto 15 bold",
                 )
                 self.body_fat_label = Label(
@@ -914,14 +946,13 @@ class App(ttk.Window):
 
                 # creating the average weekly lost frame and putting the average weekly lost value and label inside
                 self.avg_week_lost_frame = Frame(self)
-                self.avg_week_lost = ttk.StringVar(value="27%")
                 self.avg_weekly_lost = Label(
                     self.avg_week_lost_frame,
-                    textvariable=self.avg_week_lost,
+                    textvariable=self.average_weekly_lost_var,
                     font="roboto 15 bold",
                 )
                 self.avg_weekly_lost_label = Label(
-                    self.avg_week_lost_frame, text="Body fat", font="roboto 12"
+                    self.avg_week_lost_frame, text="Avg weekly lost", font="roboto 12"
                 )
                 # loading the enter button image and creating it
                 self.user_img_path = get_path(r"assets\enter_butt.png")
