@@ -321,17 +321,27 @@ class App(ttk.Window):
         self.geometry("1600x900")
 
         # load data
-        self.load_user_data()
-        self.load_main_data()
-        self.process_dates()
-        self.process_weights()
-
+        self.load_update_main_data()
         # layout\widgets
         self.topbar = self.TopBar(self)
         self.mainframe = self.MainFrame(self)
 
         # run
         self.mainloop()
+
+    @classmethod
+    def load_update_main_data(cls):
+        cls.load_user_data()
+        cls.load_main_data()
+        cls.process_dates()
+        cls.process_weights()
+        # cls.load_update_frames_data()
+
+    @classmethod
+    def save_main_data(cls):
+        cls.main_data = cls.main_data.sort_values(by="dates")
+        cls.main_data.to_csv(get_path(r"data\main_data.csv"), index=False)
+        cls.load_update_main_data()
 
     # loading the user data
     @classmethod
@@ -396,6 +406,13 @@ class App(ttk.Window):
         )
 
         cls.average_weekly_lost = cls.average_daily_lost * 7
+
+    # @classmethod
+    # def load_update_frames_data(cls):
+    # cls.MainFrame.TimePercentFrame.load_update_data()
+    # cls.MainFrame.BMIFrame.load_update_data()
+    # cls.MainFrame.ProgressFrame.load_update_data()
+    # cls.MainFrame.InfoEnterFrame.load_update_data()
 
     # creating the top bar
     class TopBar(Frame):
@@ -515,7 +532,6 @@ class App(ttk.Window):
 
                 # creating the weight entry meter with increase and decrease arrows
                 self.enter_weight_frame = Frame(self)
-
                 # griding the frame
                 self.enter_weight_frame.grid_columnconfigure(
                     index=1, weight=1, uniform="a"
@@ -529,7 +545,6 @@ class App(ttk.Window):
                 self.enter_weight_frame.grid_rowconfigure(
                     index=1, weight=1, uniform="a"
                 )
-
                 # loading the images
                 self.up_arrow_img_path = get_path(r"assets\up_arrow.png")
                 self.up_arrow_img = PhotoImage(file=self.up_arrow_img_path)
@@ -567,7 +582,7 @@ class App(ttk.Window):
                 # creating the weight meter
                 self.weight_meter = Meter(
                     self.enter_weight_frame,
-                    subtext="Weightt",
+                    subtext="Weight",
                     subtextfont="roboto 20 bold",
                     metertype=SEMI,
                     stripethickness=5,
@@ -580,7 +595,7 @@ class App(ttk.Window):
                 )
 
                 # create date entry
-                self.date = ttk.DateEntry(self, dateformat=DATE_FORMAT)
+                self.date_entry = ttk.DateEntry(self, dateformat=DATE_FORMAT)
 
                 # styling save button
                 self.sign_up_style = ttk.Style()
@@ -606,13 +621,29 @@ class App(ttk.Window):
                 self.enter_weight_frame.pack(side=TOP, pady=25)
 
                 # packing date entry
-                self.date.pack(side=TOP, expand=True)
+                self.date_entry.pack(side=TOP, expand=True)
 
                 # packing save button
                 self.save_butt.pack(expand=TRUE)
 
-            # saving the info to the csv file
-            def save_data(self): ...
+            # saving the info to the csv file and updating all of the frames to show the new info
+            def save_data(self):
+                # prepare the data
+                self.weight = self.weight_meter.amountusedvar.get()
+                self.date = self.date_entry.entry.get()
+                # changing the main data data-frame
+                self.new_data = pd.DataFrame(
+                    data={"weights": [self.weight], "dates": [self.date]}
+                )
+                App.main_data = pd.concat(
+                    [App.main_data, self.new_data], ignore_index=True
+                )
+                App.main_data["dates"] = pd.to_datetime(App.main_data["dates"])
+
+                # calling the corresponding functions to save and update the data
+
+                self.destroy()
+                App.save_main_data()
 
         class TimePercentFrame(Frame):
             def __init__(self, parent):
@@ -808,7 +839,6 @@ class App(ttk.Window):
                 self.grid(column=3, row=1, sticky=NSEW)
                 self.load_update_data()
                 self.create_grid()
-                self.create_widgets()
                 self.create_layout()
 
             def create_grid(self):
@@ -819,6 +849,7 @@ class App(ttk.Window):
                 self.rowconfigure(2, weight=1)
 
             def load_update_data(self):
+                # loading the values
                 self.lost_weight_var = ttk.StringVar(value=str(App.weight_lost) + " KG")
                 self.remaining_weight_var = ttk.StringVar(
                     value=str(App.weight_remaining) + " KG"
@@ -827,6 +858,11 @@ class App(ttk.Window):
                     value=give_percentage(
                         elapsed=App.weight_lost, total=App.weight_lost_total
                     )
+                )
+                self.create_widgets()
+                # setting the values
+                self.progress_percent_meter.amountusedvar.set(
+                    self.progress_percent.get()
                 )
 
             def create_widgets(self):
@@ -845,7 +881,7 @@ class App(ttk.Window):
                 )
                 # creating the lost weight frame and putting the lost wight value and label inside
                 self.lost_frame = Frame(self)
-                self.lost = Label(
+                self.lost_weight = Label(
                     self.lost_frame,
                     textvariable=self.lost_weight_var,
                     font="roboto 15 bold",
@@ -854,7 +890,7 @@ class App(ttk.Window):
 
                 # creating the remaining weight frame and putting the remaining wight value and label inside
                 self.remaining_frame = Frame(self)
-                self.remaining = Label(
+                self.remaining_weight = Label(
                     self.remaining_frame,
                     textvariable=self.remaining_weight_var,
                     font="roboto 15 bold",
@@ -865,9 +901,9 @@ class App(ttk.Window):
 
             def create_layout(self):
                 # placing the widgets
-                self.lost.pack(side=TOP)
+                self.lost_weight.pack(side=TOP)
                 self.lost_label.pack(side=TOP)
-                self.remaining.pack(side=TOP)
+                self.remaining_weight.pack(side=TOP)
                 self.remaining_label.pack(side=TOP)
                 self.progress_percent_meter.grid(column=1, row=1, columnspan=2)
                 self.lost_frame.grid(column=1, row=2)
