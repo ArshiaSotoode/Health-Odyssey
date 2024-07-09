@@ -374,38 +374,37 @@ class App(ttk.Window):
             (pd.to_datetime(cls.today) - App.user_info.at[0, "date of birth"]).days
             / 365
         )
+
         # get the total time
         cls.total_time = (
             App.user_info.at[0, "target date"] - App.user_info.at[0, "start date"]
         ).days
-        # get the elapsed days
 
+        # get the elapsed days
         cls.elapsed_days = (
-            pd.to_datetime(cls.today) - App.user_info.at[0, "start date"]
+            App.main_data["dates"].iloc[-1] - App.user_info.at[0, "start date"]
         ).days
+
         # get the remaining days
-        cls.remaining_days = (
-            App.user_info.at[0, "target date"] - pd.to_datetime(cls.today)
-        ).days
+        cls.remaining_days = cls.total_time - cls.elapsed_days
 
     @classmethod
     def process_weights(cls):
-        cls.weight_lost = (
-            App.user_info.at[0, "start weight"] - App.main_data.at[-0, "weights"]
-        )
-        cls.weight_remaining = (
-            App.main_data.at[-0, "weights"] - App.user_info.at[0, "target weight"]
-        )
+        cls.current_weight = App.main_data["weights"].iloc[-1]
+
+        cls.weight_lost = App.main_data["weights"].iloc[0] - cls.current_weight
+        cls.weight_remaining = cls.current_weight - App.user_info.at[0, "target weight"]
         cls.weight_lost_total = (
             App.user_info.at[0, "start weight"] - App.user_info.at[0, "target weight"]
         )
-        cls.average_daily_lost = (
-            (cls.main_data.at[-0, "dates"] - App.main_data.at[0, "dates"]).days
-            * cls.weight_lost_total
-            / 100
-        )
-
-        cls.average_weekly_lost = cls.average_daily_lost * 7
+        if cls.elapsed_days > 0:
+            cls.average_daily_lost = round(cls.weight_lost / cls.elapsed_days, 3)
+        else:
+            cls.average_daily_lost = 0
+        if cls.elapsed_days > 7:
+            cls.average_weekly_lost = round(cls.average_daily_lost * 7, 3)
+        else:
+            cls.average_weekly_lost = 0
 
     # @classmethod
     # def load_update_frames_data(cls):
@@ -684,6 +683,14 @@ class App(ttk.Window):
                     )
                 )
 
+                # for update only: checking if meter variable exists and if it exists update the value
+                try:
+                    self.time_percent_meter.configure(
+                        amountused=self.time_percent_var.get()
+                    )
+                except AttributeError:
+                    pass
+
             def create_widgets(self):
 
                 # creating the time percent meter
@@ -770,14 +777,12 @@ class App(ttk.Window):
             def load_update_data(self):
                 self.BMI_var = ttk.DoubleVar(
                     value=calculate_BMI(
-                        weight=App.main_data.at[-0, "weights"],
+                        weight=App.current_weight,
                         height=App.user_info.at[0, "height"],
                     )
                 )
                 # getting the last item in the main data weight column
-                self.current_weight_var = ttk.IntVar(
-                    value=App.main_data.at[-0, "weights"]
-                )
+                self.current_weight_var = ttk.IntVar(value=App.current_weight)
 
                 self.goal_weight_var = ttk.IntVar(
                     value=App.user_info.at[0, "target weight"]
@@ -933,7 +938,7 @@ class App(ttk.Window):
                 self.body_fat = calculate_body_fat_percentage(
                     height=App.user_info.at[0, "height"],
                     age=App.user_age,
-                    weight=App.main_data.at[-0, "weights"],
+                    weight=App.current_weight,
                 )
                 self.body_fat_var = ttk.StringVar(value=str(self.body_fat) + " %")
 
