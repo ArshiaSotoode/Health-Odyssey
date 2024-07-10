@@ -7,8 +7,8 @@ import pathlib
 import dummy_data
 import pandas as pd
 from matplotlib.figure import Figure
-from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
-import seaborn as sns
+from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg, NavigationToolbar2Tk
+import matplotlib.pyplot as plt
 from tkinter.font import nametofont
 from os.path import exists
 from string import punctuation
@@ -1047,33 +1047,44 @@ class App(ttk.Window):
                 super().__init__(parent)
                 # setup
                 self.create_widgets()
+                self.load_update_data()
                 self.create_layout()
                 # placing the frame inside of the main frame
                 self.grid(column=3, row=2, sticky=NSEW)
+
+            def load_update_data(self):
+                # load/update data
+                self.table_data = App.main_data
+                self.table_data["weight_diff"] = self.table_data["weights"].diff()
+                self.table_data = self.table_data[["weights", "weight_diff", "dates"]]
+
+                # set the data
+                self.table.build_table_data(
+                    coldata=self.table_data.columns, rowdata=self.table_data.values
+                )
+
+                # making it beautiful
+                self.table.align_column_center(cid=0)
+                self.table.align_column_center(cid=1)
+                self.table.align_column_center(cid=2)
+                self.table.align_heading_center(cid=0)
+                self.table.align_heading_center(cid=1)
+                self.table.align_heading_center(cid=2)
+                self.table.autofit_columns()
 
             def create_widgets(self):
                 # determining the font size for the table
                 default_font = nametofont("TkDefaultFont")
                 default_font.configure(size=14, weight="bold")
-                self.coldata = [
-                    {"text": "weight", "stretch": False},
-                    {"text": "lost", "stretch": False},
-                    {"text": "date", "stretch": False},
-                ]
-                self.rowdata = [
-                    ("86KG", "-1.0KG", "nov/26/2023"),
-                    ("85KG", "-15.0KG", "nov/15/2023"),
-                    ("96KG", "-2.0KG", "nov/3/2023"),
-                ]
 
                 # creating the table
                 self.table = Tableview(
                     self,
-                    coldata=self.coldata,
-                    rowdata=self.rowdata,
+                    pagesize=500,
                     paginated=True,
                     searchable=True,
                     bootstyle=PRIMARY,
+                    stripecolor=("#B7FFFB", None),
                 )
 
             def create_layout(self):
@@ -1085,32 +1096,64 @@ class App(ttk.Window):
                 super().__init__(parent)
                 # setup
                 self.create_widgets()
+                self.load_update_data()
                 self.create_layout()
                 # placing the frame inside of the main frame
                 self.grid(column=1, row=2, sticky=NSEW)
 
-            def create_widgets(self):
-                # loading data
-                self.revenue_data = pd.DataFrame(dummy_data.revenue)
-                self.revenue_data["date"] = pd.to_datetime(self.revenue_data["date"])
-
-                # crating plot
-                self.fig_1 = Figure(figsize=(10, 10), layout="constrained")
-                self.plot = self.fig_1.add_subplot()
-                sns.lineplot(
-                    y=self.revenue_data["amount"],
-                    x=self.revenue_data["date"],
-                    ax=self.plot,
-                )
+            def load_update_data(self):
+                self.ax.cla()
                 # make the x axis(dates) more elegant and human readable
-                self.fig_1.autofmt_xdate()
+                self.fig.autofmt_xdate()
+                # plotting the user inputted data
+                self.x = App.main_data["dates"]
+                self.y = App.main_data["weights"]
+                self.ax.plot(self.x, self.y, label="user input", marker="o")
+                self.ax.legend()
+
+                # plotting the estimated data
+
+            def create_widgets(self):
+                plt.style.use("seaborn-v0_8-whitegrid")
+                # crating plot
+                self.fig = Figure(figsize=(10, 10), layout="constrained")
+                self.ax = self.fig.add_subplot()
+                # cant use this part because when the plot is updated all the labels will be cleared !!!!!!
+                """
+                self.ax.set_xlabel(
+                    "Date",
+                    labelpad=5,
+                    fontdict={
+                        "family": "serif",
+                        "color": "#4582EC",
+                        "weight": "normal",
+                        "size": 16,
+                    },
+                )
+                self.ax.set_ylabel(
+                    "Weight",
+                    labelpad=5,
+                    fontdict={
+                        "family": "roboto",
+                        "color": "#4582EC",
+                        "weight": "normal",
+                        "size": 16,
+                    },
+                )
+                """
+
                 # creating the canvas and putting the plot in it and drawing the canvas
-                self.canvas = FigureCanvasTkAgg(master=self, figure=self.fig_1)
+                self.canvas = FigureCanvasTkAgg(master=self, figure=self.fig)
                 self.canvas.draw()
+
+                self.toolbar = NavigationToolbar2Tk(
+                    self.canvas, self, pack_toolbar=False
+                )
 
             def create_layout(self):
                 # placing the canvas
-                self.canvas.get_tk_widget().pack()
+                self.toolbar.pack(side=BOTTOM, fill=X)
+                self.canvas.get_tk_widget().pack(side=TOP, fill=BOTH, expand=True)
 
 
 if __name__ == "__main__":
