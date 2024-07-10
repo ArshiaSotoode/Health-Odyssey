@@ -649,6 +649,7 @@ class App(ttk.Window):
                 super().__init__(parent)
                 # setup
                 self.grid(column=1, row=1, sticky=NSEW)
+                self.initialize_variables()
                 self.load_update_data()
                 self.create_grid()
                 self.create_widgets()
@@ -662,27 +663,25 @@ class App(ttk.Window):
                 self.rowconfigure(1, weight=10)
                 self.rowconfigure(2, weight=1)
 
+            def initialize_variables(self):
+                self.total_duration_var = ttk.StringVar()
+                self.remaining_duration_var = ttk.StringVar()
+                self.past_days_var = ttk.StringVar()
+                self.time_percent_var = ttk.DoubleVar()
+
             def load_update_data(self):
-                # process total duration
-                self.total_duration_var = ttk.StringVar(
-                    value=str(App.total_time) + " days"
-                )
-                # process remaining days
-                self.remaining_duration_var = ttk.StringVar(
-                    value=str(App.remaining_days) + " days"
-                )
-                # past days
-                self.past_days_var = ttk.StringVar(
-                    value=str(App.elapsed_days) + " days"
-                )
-                # process rime passed in percentage
-                self.time_percent_var = ttk.DoubleVar(
-                    value=give_percentage(
+                self.total_duration_var.set(str(App.total_time) + " days")
+
+                self.remaining_duration_var.set(str(App.remaining_days) + " days")
+
+                self.past_days_var.set(str(App.elapsed_days) + " days")
+
+                self.time_percent_var.set(
+                    give_percentage(
                         elapsed=App.elapsed_days,
                         total=App.total_time,
                     )
                 )
-
                 # for update only: checking if meter variable exists and if it exists update the value
                 try:
                     self.time_percent_meter.configure(
@@ -762,6 +761,7 @@ class App(ttk.Window):
                 # setup
                 # placing the frame inside of the main frame
                 self.grid(column=2, row=1, sticky=NSEW)
+                self.initialize_variables()
                 self.load_update_data()
                 self.create_grid()
                 self.create_widgets()
@@ -774,19 +774,28 @@ class App(ttk.Window):
                 self.rowconfigure(1, weight=10)
                 self.rowconfigure(2, weight=1)
 
+            def initialize_variables(self):
+                self.BMI_var = ttk.DoubleVar()
+                self.current_weight_var = ttk.IntVar()
+                self.goal_weight_var = ttk.IntVar()
+
             def load_update_data(self):
-                self.BMI_var = ttk.DoubleVar(
-                    value=calculate_BMI(
+                self.BMI_var.set(
+                    calculate_BMI(
                         weight=App.current_weight,
                         height=App.user_info.at[0, "height"],
                     )
                 )
                 # getting the last item in the main data weight column
-                self.current_weight_var = ttk.IntVar(value=App.current_weight)
+                self.current_weight_var.set(App.current_weight)
 
-                self.goal_weight_var = ttk.IntVar(
-                    value=App.user_info.at[0, "target weight"]
-                )
+                self.goal_weight_var.set(App.user_info.at[0, "target weight"])
+
+                # for update only: checking if meter variable exists and if it exists update the value
+                try:
+                    self.BMI_meter.configure(amountused=self.current_weight_var.get())
+                except AttributeError:
+                    pass
 
             def create_widgets(self):
                 # creating the BMI meter
@@ -842,7 +851,9 @@ class App(ttk.Window):
                 # setup
                 # placing the frame inside of the main frame
                 self.grid(column=3, row=1, sticky=NSEW)
+                self.initialize_variables()
                 self.load_update_data()
+                self.create_widgets()
                 self.create_grid()
                 self.create_layout()
 
@@ -853,22 +864,27 @@ class App(ttk.Window):
                 self.rowconfigure(1, weight=10)
                 self.rowconfigure(2, weight=1)
 
+            def initialize_variables(self):
+                self.lost_weight_var = ttk.StringVar()
+                self.remaining_weight_var = ttk.StringVar()
+                self.progress_percent = ttk.DoubleVar()
+
             def load_update_data(self):
                 # loading the values
-                self.lost_weight_var = ttk.StringVar(value=str(App.weight_lost) + " KG")
-                self.remaining_weight_var = ttk.StringVar(
-                    value=str(App.weight_remaining) + " KG"
-                )
-                self.progress_percent = ttk.DoubleVar(
-                    value=give_percentage(
+                self.lost_weight_var.set(str(App.weight_lost) + " KG")
+                self.remaining_weight_var.set(str(App.weight_remaining) + " KG")
+                self.progress_percent.set(
+                    give_percentage(
                         elapsed=App.weight_lost, total=App.weight_lost_total
                     )
                 )
-                self.create_widgets()
-                # setting the values
-                self.progress_percent_meter.amountusedvar.set(
-                    self.progress_percent.get()
-                )
+                # for update only: checking if meter variable exists and if it exists update the value
+                try:
+                    self.progress_percent_meter.configure(
+                        amountused=self.progress_percent.get()
+                    )
+                except AttributeError:
+                    pass
 
             def create_widgets(self):
                 # creating the progress percent meter
@@ -919,6 +935,7 @@ class App(ttk.Window):
                 super().__init__(parent)
                 self.parent = parent
                 # setup
+                self.initialize_variables()
                 self.load_update_data()
                 self.create_grid()
                 self.create_widgets()
@@ -934,20 +951,21 @@ class App(ttk.Window):
                 self.rowconfigure(1, weight=1, uniform="a")
                 self.rowconfigure(2, weight=1, uniform="a")
 
+            def initialize_variables(self):
+                self.body_fat_var = ttk.StringVar()
+                self.average_daily_lost_var = ttk.StringVar()
+                self.average_weekly_lost_var = ttk.StringVar()
+
             def load_update_data(self):
                 self.body_fat = calculate_body_fat_percentage(
                     height=App.user_info.at[0, "height"],
                     age=App.user_age,
                     weight=App.current_weight,
                 )
-                self.body_fat_var = ttk.StringVar(value=str(self.body_fat) + " %")
+                self.body_fat_var.set(str(self.body_fat) + " %")
 
-                self.average_daily_lost_var = ttk.StringVar(
-                    value=str(App.average_daily_lost) + " KG"
-                )
-                self.average_weekly_lost_var = ttk.StringVar(
-                    value=str(App.average_weekly_lost) + " KG"
-                )
+                self.average_daily_lost_var.set(str(App.average_daily_lost) + " KG")
+                self.average_weekly_lost_var.set(str(App.average_weekly_lost) + " KG")
 
             # opening the weight entry popup
             def open_weight_entry(self):
