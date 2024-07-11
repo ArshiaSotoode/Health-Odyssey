@@ -800,7 +800,7 @@ class App(ttk.Window):
 
                 # for update only: checking if meter variable exists and if it exists update the value
                 try:
-                    self.BMI_meter.configure(amountused=self.current_weight_var.get())
+                    self.BMI_meter.configure(amountused=self.BMI_var.get())
                 except AttributeError:
                     pass
 
