@@ -34,7 +34,7 @@ def get_path(join_path=""):
 # check if the user signed up and if not ask theme for it
 def check_sign_up():
     if exists(get_path(r"data\user_info.csv")):
-        App()
+        app = App()
     else:
         SignUp()
 
@@ -361,7 +361,8 @@ class App(ttk.Window):
     def load_main_data(cls):
         try:
             cls.main_data = pd.read_csv(
-                get_path(r"data\main_data.csv"), parse_dates=["dates"]
+                get_path(r"data\main_data.csv"),
+                parse_dates=["dates"],
             )
         except pd.errors.EmptyDataError:
             App.main_data = pd.DataFrame()
@@ -406,12 +407,15 @@ class App(ttk.Window):
         else:
             cls.average_weekly_lost = 0
 
-    # @classmethod
-    # def load_update_frames_data(cls):
-    # cls.MainFrame.TimePercentFrame.load_update_data()
-    # cls.MainFrame.BMIFrame.load_update_data()
-    # cls.MainFrame.ProgressFrame.load_update_data()
-    # cls.MainFrame.InfoEnterFrame.load_update_data()
+    def load_update_frames_data(self):
+        self.mainframe.TimePercentFrame.load_update_data(
+            self.mainframe.time_percent_frame
+        )
+        self.mainframe.BMIFrame.load_update_data(self.mainframe.BMI_frame)
+        self.mainframe.ProgressFrame.load_update_data(self.mainframe.progress_frame)
+        self.mainframe.InfoEnterFrame.load_update_data(self.mainframe.info_enter_frame)
+        self.mainframe.plot_frame.load_update_data()
+        self.mainframe.table_frame.load_update_data()
 
     # creating the top bar
     class TopBar(Frame):
@@ -488,7 +492,7 @@ class App(ttk.Window):
         def __init__(self, parent):
             super().__init__(parent)
             # setup
-
+            self.parent = parent
             self.grid_main_frame()
             # placing the frames inside
             self.time_percent_frame = self.TimePercentFrame(self)
@@ -643,6 +647,9 @@ class App(ttk.Window):
 
                 self.destroy()
                 App.save_main_data()
+                # updating the frames data
+                # self.parent.parent refers to self.Mainframe.App
+                App.load_update_frames_data(self.parent.parent)
 
         class TimePercentFrame(Frame):
             def __init__(self, parent):
@@ -1053,14 +1060,15 @@ class App(ttk.Window):
                 self.grid(column=3, row=2, sticky=NSEW)
 
             def load_update_data(self):
+                self.table_data = App.main_data.copy()
                 # load/update data
-                self.table_data = App.main_data
                 self.table_data["weight_diff"] = self.table_data["weights"].diff()
                 self.table_data = self.table_data[["weights", "weight_diff", "dates"]]
 
                 # set the data
                 self.table.build_table_data(
-                    coldata=self.table_data.columns, rowdata=self.table_data.values
+                    coldata=self.table_data.columns.to_list(),
+                    rowdata=self.table_data.values.tolist(),
                 )
 
                 # making it beautiful
@@ -1110,6 +1118,7 @@ class App(ttk.Window):
                 self.y = App.main_data["weights"]
                 self.ax.plot(self.x, self.y, label="user input", marker="o")
                 self.ax.legend()
+                self.canvas.draw()
 
                 # plotting the estimated data
 
