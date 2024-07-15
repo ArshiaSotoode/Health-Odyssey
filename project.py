@@ -9,7 +9,8 @@ from matplotlib.figure import Figure
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg, NavigationToolbar2Tk
 import matplotlib.pyplot as plt
 from tkinter.font import nametofont
-from os.path import exists, mkdir
+from os.path import exists
+from os import mkdir
 from string import punctuation
 from datetime import date
 
