@@ -4,7 +4,6 @@ from ttkbootstrap.widgets import Meter, Button, Label, Frame, Entry
 from ttkbootstrap.tableview import Tableview
 from ttkbootstrap import PhotoImage
 import pathlib
-import dummy_data
 import pandas as pd
 from matplotlib.figure import Figure
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg, NavigationToolbar2Tk
@@ -95,7 +94,9 @@ class SignUp(ttk.Window):
         valid_name = self.register(validate_name)
 
         # the welcome label
-        self.welcome = Label(self.main_frame, text="Welcome😍", font="roboto 40 bold")
+        self.edit_label = Label(
+            self.main_frame, text="Welcome😍", font="roboto 40 bold"
+        )
 
         # input name
         self.name_entry_stringvar = ttk.StringVar()
@@ -246,7 +247,7 @@ class SignUp(ttk.Window):
         )
 
     def create_layout(self):
-        self.welcome.grid(column=1, columnspan=2, row=1)
+        self.edit_label.grid(column=1, columnspan=2, row=1)
         # packing the name_entry
         self.name_entry_label.pack(side=LEFT)
         self.name_entry.pack(side=LEFT)
@@ -460,7 +461,9 @@ class App(ttk.Window):
             # getting the path for user butt img
             self.edit_img_path = get_path(r"assets\edit.png")
             self.edit_img = PhotoImage(file=self.edit_img_path)
-            self.edit_button = Button(self, image=self.edit_img, style="link.TButton")
+            self.edit_button = Button(
+                self, image=self.edit_img, style="link.TButton", command=self.edit_info
+            )
 
             # user switch button
             # getting the path for user butt img
@@ -486,6 +489,270 @@ class App(ttk.Window):
             self.edit_button.pack(side=LEFT, padx=5, pady=10)
             self.switch_user_button.pack(side=LEFT, padx=5, pady=10)
             self.setting_button.pack(side=RIGHT, padx=10, pady=10)
+
+        class edit_info(ttk.Toplevel):
+            def __init__(self):
+                super().__init__("litera")
+                # main-setup
+                self.title("Editing User Information")
+                self.geometry("700x900")
+                self.resizable(width=False, height=False)
+
+                self.create_widgets()
+                self.create_layout()
+
+                self.mainloop()
+
+            def create_widgets(self):
+
+                # creating the Main Frame
+                self.main_frame = Frame(self)
+
+                # girding the main_frame
+                self.main_frame.columnconfigure(index=1, weight=1, uniform="a")
+                self.main_frame.columnconfigure(index=2, weight=1, uniform="a")
+                self.main_frame.rowconfigure(index=1, weight=1, uniform="a")
+                self.main_frame.rowconfigure(index=2, weight=1, uniform="a")
+                self.main_frame.rowconfigure(index=3, weight=1, uniform="a")
+                self.main_frame.rowconfigure(index=4, weight=3, uniform="a")
+                self.main_frame.rowconfigure(index=5, weight=4, uniform="a")
+                self.main_frame.rowconfigure(index=6, weight=1, uniform="a")
+
+                # registering validation functions
+                valid_name = self.register(validate_name)
+
+                # the welcome label
+                self.edit_label = Label(
+                    self.main_frame, text="Editing Info !!!", font="roboto 40 bold"
+                )
+
+                # input name
+                self.name_entry_stringvar = ttk.StringVar(
+                    value=App.user_info.at[0, "name"]
+                )
+                self.name_entry_frame = Frame(self.main_frame)
+                self.name_entry_label = Label(
+                    self.name_entry_frame, text="Name : ", font="roboto 15 bold"
+                )
+                self.name_entry = Entry(
+                    self.name_entry_frame,
+                    textvariable=self.name_entry_stringvar,
+                    font="roboto 15",
+                    validatecommand=(valid_name, "%P"),
+                    validate="focus",
+                )
+
+                # input last_name
+                self.last_name_entry_stringvar = ttk.StringVar(
+                    value=App.user_info.at[0, "last_name"]
+                )
+                self.last_name_entry_frame = Frame(self.main_frame)
+                self.last_name_entry_label = Label(
+                    self.last_name_entry_frame,
+                    text="Last Name : ",
+                    font="roboto 15 bold",
+                )
+                self.last_name_entry = Entry(
+                    self.last_name_entry_frame,
+                    textvariable=self.last_name_entry_stringvar,
+                    font="roboto 15",
+                    validatecommand=(valid_name, "%P"),
+                    validate="focus",
+                )
+
+                # input Date of birth
+                self.date_of_birth_frame = Frame(self.main_frame)
+                self.date_of_birth_entry = ttk.DateEntry(
+                    self.date_of_birth_frame,
+                    dateformat=DATE_FORMAT,
+                    startdate=App.user_info.at[0, "date of birth"],
+                )
+                self.date_of_birth_label = Label(
+                    self.date_of_birth_frame,
+                    text="Date of birth : ",
+                    font="roboto 15 bold",
+                )
+
+                # input gender
+                self.gender_frame = Frame(self.main_frame)
+                self.gender_label = Label(
+                    self.gender_frame, text="Gender : ", font="roboto 15 bold"
+                )
+
+                # making a list and inserting it to our combobox
+                self.gender_combobox_stringvar = ttk.StringVar(
+                    value=App.user_info.at[0, "gender"]
+                )
+                self.gender_combobox_list = ["Male", "Female"]
+                self.gender_combobox = ttk.Combobox(
+                    self.gender_frame,
+                    values=self.gender_combobox_list,
+                    font="roboto 15",
+                    textvariable=self.gender_combobox_stringvar,
+                )
+                # setting the default value for combobox
+                self.gender_combobox.current(0)
+
+                # height selector
+
+                # making func for increase height arrow
+                def increase_height():
+                    height = self.height_meter.amountusedvar.get()
+                    if height < 250:
+                        height += 1
+                    self.height_meter.amountusedvar.set(height)
+
+                # making func for decrease height arrow
+                def decrease_height():
+                    height = self.height_meter.amountusedvar.get()
+                    if height > 0:
+                        height -= 1
+                    self.height_meter.amountusedvar.set(height)
+
+                self.height_meter = Meter(
+                    self.main_frame,
+                    subtext="Height",
+                    subtextfont="roboto 20 bold",
+                    metertype=SEMI,
+                    stripethickness=5,
+                    interactive=True,
+                    metersize=250,
+                    meterthickness=15,
+                    amounttotal=250,
+                    amountused=App.user_info.at[0, "height"],
+                    textright="Cm",
+                )
+                self.up_arrow_img_path = get_path(r"assets\up_arrow.png")
+                self.up_arrow_img = PhotoImage(file=self.up_arrow_img_path)
+                self.down_arrow_img_path = get_path(r"assets\down_arrow.png")
+                self.down_arrow_img = PhotoImage(file=self.down_arrow_img_path)
+                self.increase_height_butt = Button(
+                    self.main_frame,
+                    image=self.up_arrow_img,
+                    style="link.TButton",
+                    command=increase_height,
+                )
+                self.decrees_height_butt = Button(
+                    self.main_frame,
+                    image=self.down_arrow_img,
+                    style="link.TButton",
+                    command=decrease_height,
+                )
+
+                # start weight/date
+                self.start_wight_meter = Meter(
+                    self.main_frame,
+                    subtext="Start Weight",
+                    subtextfont="roboto 20 bold",
+                    metertype=SEMI,
+                    stripethickness=5,
+                    interactive=True,
+                    metersize=300,
+                    meterthickness=15,
+                    amounttotal=180,
+                    amountused=App.user_info.at[0, "start weight"],
+                    textright="KG",
+                )
+
+                self.start_date = ttk.DateEntry(
+                    self.main_frame,
+                    dateformat=DATE_FORMAT,
+                    startdate=App.user_info.at[0, "start date"],
+                )
+
+                # target weight/date
+                self.target_wight_meter = Meter(
+                    self.main_frame,
+                    subtext="Target Weight",
+                    subtextfont="roboto 20 bold",
+                    metertype=SEMI,
+                    stripethickness=5,
+                    interactive=True,
+                    metersize=300,
+                    meterthickness=15,
+                    amounttotal=180,
+                    amountused=App.user_info.at[0, "target weight"],
+                    textright="KG",
+                )
+
+                self.target_date = ttk.DateEntry(
+                    self.main_frame,
+                    dateformat=DATE_FORMAT,
+                    startdate=App.user_info.at[0, "target date"],
+                )
+
+                # styling the sign up butt
+                self.sign_up_style = ttk.Style()
+                self.sign_up_style.configure("sign_up.TButton", font=("roboto", 25))
+                # sign up button
+
+                self.sign_up_butt = Button(
+                    self.main_frame,
+                    text="Edit",
+                    style="sign_up.TButton",
+                    width=8,
+                    command=self.save_info,
+                )
+
+            def create_layout(self):
+                self.edit_label.grid(column=1, columnspan=2, row=1)
+                # packing the name_entry
+                self.name_entry_label.pack(side=LEFT)
+                self.name_entry.pack(side=LEFT)
+                self.name_entry_frame.grid(column=1, row=2, padx=10, pady=10)
+                # packing the last_name_entry
+                self.last_name_entry_label.pack(side=LEFT)
+                self.last_name_entry.pack(side=LEFT)
+                self.last_name_entry_frame.grid(column=2, row=2, padx=10, pady=10)
+
+                # packing date of birth
+                self.date_of_birth_label.pack(side=LEFT)
+                self.date_of_birth_entry.pack(side=RIGHT, padx=10)
+                self.date_of_birth_frame.grid(column=1, row=3)
+
+                # packing gender combobox
+                self.gender_label.pack(side=LEFT)
+                self.gender_combobox.pack(side=RIGHT)
+                self.gender_frame.grid(column=2, row=3)
+
+                # packing height input
+                self.height_meter.grid(column=1, row=4, columnspan=2)
+                self.increase_height_butt.grid(column=2, row=4)
+                self.decrees_height_butt.grid(column=1, row=4)
+
+                # pack start weight and start date
+                self.start_wight_meter.grid(column=1, row=5)
+                self.start_date.grid(column=1, row=5, sticky=S)
+
+                # pack target weight and start date
+                self.target_wight_meter.grid(column=2, row=5)
+                self.target_date.grid(column=2, row=5, sticky=S)
+
+                # pack sign up butt
+                self.sign_up_butt.grid(column=1, row=6, columnspan=2)
+
+                # packing the main_frame
+                self.main_frame.pack()
+
+            # saving sign up info in a csv file
+            def save_info(self):
+                # storing the data in a dict
+                self.user_data = {
+                    "name": self.name_entry_stringvar.get().capitalize(),
+                    "last_name": self.last_name_entry_stringvar.get().capitalize(),
+                    "date of birth": self.date_of_birth_entry.entry.get(),
+                    "gender": self.gender_combobox_stringvar.get(),
+                    "height": self.height_meter.amountusedvar.get(),
+                    "start weight": self.start_wight_meter.amountusedvar.get(),
+                    "target weight": self.target_wight_meter.amountusedvar.get(),
+                    "start date": self.start_date.entry.get(),
+                    "target date": self.target_date.entry.get(),
+                }
+                self.user_info_df = pd.DataFrame(self.user_data, index=[0])
+                self.user_info_df.to_csv(get_path(r"data\user_info.csv"), index=False)
+
+                # closing the sign up window
+                self.destroy()
 
     # creating the main frame
     class MainFrame(Frame):
