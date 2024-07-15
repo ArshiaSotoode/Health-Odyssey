@@ -9,7 +9,7 @@ from matplotlib.figure import Figure
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg, NavigationToolbar2Tk
 import matplotlib.pyplot as plt
 from tkinter.font import nametofont
-from os.path import exists
+from os.path import exists, mkdir
 from string import punctuation
 from datetime import date
 
@@ -35,6 +35,8 @@ def check_sign_up():
     if exists(get_path(r"data\user_info.csv")):
         app = App()
     else:
+        if not exists(get_path(r"data")):
+            mkdir(get_path(r"data"))
         SignUp()
 
 
