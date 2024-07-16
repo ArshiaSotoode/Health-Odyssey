@@ -55,4 +55,4 @@ Follow the on-screen instructions to set up your profile and start logging your 
 
 - Thank you to the fantastic team at **CS50p** for helping in achieving the skills to make this project happen .
 
-- Icons made by Freepik from Flaticon.
+- the designing of the program was done in [Figma](https://www.figma.com/)
