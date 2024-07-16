@@ -71,7 +71,7 @@ class SignUp(ttk.Window):
         # main-setup
         self.title("Weight tracker")
         self.geometry("700x900")
-        self.resizable(width=False, height=False)
+        #self.resizable(width=False, height=False)
 
         self.create_widgets()
         self.create_layout()
@@ -325,7 +325,7 @@ class App(ttk.Window):
         self.geometry("1600x900")
 
         # load data
-        self.load_update_main_data()
+        self.load_update_app_data()
         # layout\widgets
         self.topbar = self.TopBar(self)
         self.mainframe = self.MainFrame(self)
@@ -333,19 +333,18 @@ class App(ttk.Window):
         # run
         self.mainloop()
 
-    @classmethod
-    def load_update_main_data(cls):
-        cls.load_user_data()
-        cls.load_main_data()
-        cls.process_dates()
-        cls.process_weights()
-        # cls.load_update_frames_data()
+    @staticmethod
+    def load_update_app_data():
+        App.load_user_data()
+        App.load_main_data()
+        App.process_dates()
+        App.process_weights()
 
     @classmethod
     def save_main_data(cls):
         cls.main_data = cls.main_data.sort_values(by="dates")
         cls.main_data.to_csv(get_path(r"data\main_data.csv"), index=False)
-        cls.load_update_main_data()
+        cls.load_update_app_data()
 
     # loading the user data
     @classmethod
@@ -429,6 +428,7 @@ class App(ttk.Window):
                 width=900,
                 height=100,
             )
+            self.parent = parent
             # setup
             self.pack(side=TOP, fill=X)
             self.create_widgets()
@@ -465,7 +465,7 @@ class App(ttk.Window):
             self.edit_img_path = get_path(r"assets\edit.png")
             self.edit_img = PhotoImage(file=self.edit_img_path)
             self.edit_button = Button(
-                self, image=self.edit_img, style="link.TButton", command=self.edit_info
+                self, image=self.edit_img, style="link.TButton", command=self.open_edit_info
             )
 
             # user switch button
@@ -493,13 +493,17 @@ class App(ttk.Window):
             self.switch_user_button.pack(side=LEFT, padx=5, pady=10)
             self.setting_button.pack(side=RIGHT, padx=10, pady=10)
 
+        def open_edit_info(self):
+            self.edit_info_toplevel = self.edit_info(self.parent)
+        
         class edit_info(ttk.Toplevel):
-            def __init__(self):
+            def __init__(self,parent):
                 super().__init__("litera")
+                self.parent = parent
                 # main-setup
                 self.title("Editing User Information")
                 self.geometry("700x900")
-                self.resizable(width=False, height=False)
+                #self.resizable(width=False, height=False)
 
                 self.create_widgets()
                 self.create_layout()
@@ -754,6 +758,10 @@ class App(ttk.Window):
                 self.user_info_df = pd.DataFrame(self.user_data, index=[0])
                 self.user_info_df.to_csv(get_path(r"data\user_info.csv"), index=False)
 
+                #loading and updating the appdata and frames
+                App.load_update_app_data()
+                App.load_update_frames_data(self.parent)
+                
                 # closing the sign up window
                 self.destroy()
 
