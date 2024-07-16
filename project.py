@@ -443,19 +443,23 @@ class App(ttk.Window):
 
         def initialize_variables(self):
             self.user_name_var = ttk.StringVar()
-            self.height_var= ttk.StringVar()
-            
+            self.height_var = ttk.StringVar()
+            self.age_var = ttk.StringVar()
+
         def load_update_data(self):
-            self.user_name_var.set(App.user_info.at[0,"name"]+" "+App.user_info.at[0,"last_name"])
-            self.height_var.set(str(App.user_info.at[0,"height"])+" Cm")
-        
+            self.user_name_var.set(
+                App.user_info.at[0, "name"] + " " + App.user_info.at[0, "last_name"]
+            )
+            self.height_var.set(str(App.user_info.at[0, "height"]) + " Cm")
+
+            self.age_var.set(str(App.user_age) + " years old")
+
         def create_widgets(self):
             # user info button
             # getting the path for user butt img
             self.user_img_path = get_path(r"assets\user.png")
             self.user_img = PhotoImage(file=self.user_img_path)
             self.user_button = Button(self, image=self.user_img, style="link.TButton")
-
 
             # user name text
             self.user_name = Label(
@@ -468,12 +472,19 @@ class App(ttk.Window):
                 self, textvariable=self.height_var, font="roboto 12 underline"
             )
 
+            self.user_age = Label(
+                self, textvariable=self.age_var, font="roboto 12 underline"
+            )
+
             # editing user info button
             # getting the path for user butt img
             self.edit_img_path = get_path(r"assets\edit.png")
             self.edit_img = PhotoImage(file=self.edit_img_path)
             self.edit_button = Button(
-                self, image=self.edit_img, style="link.TButton", command=self.open_edit_info
+                self,
+                image=self.edit_img,
+                style="link.TButton",
+                command=self.open_edit_info,
             )
 
             # user switch button
@@ -497,15 +508,16 @@ class App(ttk.Window):
             self.user_button.pack(side=LEFT, padx=10, pady=10)
             self.user_name.pack(side=LEFT, padx=5, pady=10)
             self.user_height.pack(side=LEFT, padx=5, pady=10)
+            self.user_age.pack(side=LEFT, padx=5, pady=10)
             self.edit_button.pack(side=LEFT, padx=5, pady=10)
             self.switch_user_button.pack(side=LEFT, padx=5, pady=10)
             self.setting_button.pack(side=RIGHT, padx=10, pady=10)
 
         def open_edit_info(self):
             self.edit_info_toplevel = self.edit_info(self.parent)
-        
+
         class edit_info(ttk.Toplevel):
-            def __init__(self,parent):
+            def __init__(self, parent):
                 super().__init__("litera")
                 self.parent = parent
                 # main-setup
@@ -766,10 +778,10 @@ class App(ttk.Window):
                 self.user_info_df = pd.DataFrame(self.user_data, index=[0])
                 self.user_info_df.to_csv(get_path(r"data\user_info.csv"), index=False)
 
-                #loading and updating the appdata and frames
+                # loading and updating the appdata and frames
                 App.load_update_app_data()
                 App.load_update_frames_data(self.parent)
-                
+
                 # closing the sign up window
                 self.destroy()
 
