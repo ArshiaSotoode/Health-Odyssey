@@ -71,7 +71,7 @@ class SignUp(ttk.Window):
         # main-setup
         self.title("Weight tracker")
         self.geometry("700x900")
-        #self.resizable(width=False, height=False)
+        self.resizable(width=False, height=False)
 
         self.create_widgets()
         self.create_layout()
@@ -411,6 +411,7 @@ class App(ttk.Window):
             cls.average_weekly_lost = 0
 
     def load_update_frames_data(self):
+        self.topbar.load_update_data()
         self.mainframe.TimePercentFrame.load_update_data(
             self.mainframe.time_percent_frame
         )
@@ -431,6 +432,8 @@ class App(ttk.Window):
             self.parent = parent
             # setup
             self.pack(side=TOP, fill=X)
+            self.initialize_variables()
+            self.load_update_data()
             self.create_widgets()
             self.create_layout()
 
@@ -438,6 +441,14 @@ class App(ttk.Window):
         need to make the buttons square and change the hit point
         """
 
+        def initialize_variables(self):
+            self.user_name_var = ttk.StringVar()
+            self.height_var= ttk.StringVar()
+            
+        def load_update_data(self):
+            self.user_name_var.set(App.user_info.at[0,"name"]+" "+App.user_info.at[0,"last_name"])
+            self.height_var.set(str(App.user_info.at[0,"height"])+" Cm")
+        
         def create_widgets(self):
             # user info button
             # getting the path for user butt img
@@ -445,19 +456,16 @@ class App(ttk.Window):
             self.user_img = PhotoImage(file=self.user_img_path)
             self.user_button = Button(self, image=self.user_img, style="link.TButton")
 
-            self.name = App.user_info["name"].to_string(index=False)
-            self.last_name = App.user_info["last_name"].to_string(index=False)
-            self.height = App.user_info["height"].to_string(index=False)
+
             # user name text
-            self.name = ttk.StringVar(value=f"{self.name} {self.last_name}")
             self.user_name = Label(
-                self, textvariable=self.name, font="roboto 25 underline bold"
+                self, textvariable=self.user_name_var, font="roboto 25 underline bold"
             )
 
             # user height text
-            self.height = ttk.StringVar(value=f"{self.height} Cm")
+
             self.user_height = Label(
-                self, textvariable=self.height, font="roboto 12 underline"
+                self, textvariable=self.height_var, font="roboto 12 underline"
             )
 
             # editing user info button
@@ -503,7 +511,7 @@ class App(ttk.Window):
                 # main-setup
                 self.title("Editing User Information")
                 self.geometry("700x900")
-                #self.resizable(width=False, height=False)
+                self.resizable(width=False, height=False)
 
                 self.create_widgets()
                 self.create_layout()
