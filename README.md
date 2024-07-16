@@ -1,4 +1,4 @@
-![Alt text](https://github.com/ArshiaSotoode/weght-tracker-cs50p/blob/main/original-33a3566209695a7a26ef71d5302834c8.png "a title")
+![Alt text](https://github.com/ArshiaSotoode/weght-tracker-cs50p/blob/main/logo.png "a title")
 
 # Health Odyssey
 
