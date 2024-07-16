@@ -1,4 +1,4 @@
-![Alt text](https://github.com/ArshiaSotoode/weght-tracker-cs50p/blob/main/logo.png "a title")
+![Alt text](https://github.com/ArshiaSotoode/weght-tracker-cs50p/blob/main/logo.png)
 
 <h1 align="center">Health Odyssey</h1>
 
@@ -53,6 +53,6 @@ Follow the on-screen instructions to set up your profile and start logging your 
 
 ## Acknowledgements
 
-- Thank you to the fantastic team at **CS50p** for helping in achieving the skills to make this project happen .
+- Thank you to the fantastic team at **CS50p** for helping me to achieve the skills to make this project happen .
 
 - the designing of the program was done in [Figma](https://www.figma.com/)
