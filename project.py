@@ -13,6 +13,7 @@ from os.path import exists
 from os import mkdir
 from string import punctuation
 from datetime import date
+import webbrowser
 
 # file variables
 punctuation += " "
@@ -321,7 +322,7 @@ class App(ttk.Window):
     def __init__(self):
         super().__init__("litera")
         # main-setup
-        self.title("Weight tracker")
+        self.title("Health Odyssey")
         self.geometry("1600x900")
 
         # load data
@@ -495,12 +496,15 @@ class App(ttk.Window):
                 self, image=self.switch_user_img, style="link.TButton"
             )
 
-            # setting button
+            # logo button
             # getting the path for user butt img
-            self.setting_img_path = get_path(r"assets\setting.png")
-            self.setting_img = PhotoImage(file=self.setting_img_path)
-            self.setting_button = Button(
-                self, image=self.setting_img, style="link.TButton"
+            self.logo_img_path = get_path(r"assets\logo.png")
+            self.logo_img = PhotoImage(file=self.logo_img_path)
+            self.logo_button = Button(
+                self,
+                image=self.logo_img,
+                style="link.TButton",
+                command=self.about_us_popup,
             )
 
         def create_layout(self):
@@ -511,7 +515,7 @@ class App(ttk.Window):
             self.user_age.pack(side=LEFT, padx=5, pady=10)
             self.edit_button.pack(side=LEFT, padx=5, pady=10)
             self.switch_user_button.pack(side=LEFT, padx=5, pady=10)
-            self.setting_button.pack(side=RIGHT, padx=10, pady=10)
+            self.logo_button.pack(side=RIGHT, padx=10, pady=10)
 
         def open_edit_info(self):
             self.edit_info_toplevel = self.edit_info(self.parent)
@@ -784,6 +788,106 @@ class App(ttk.Window):
 
                 # closing the sign up window
                 self.destroy()
+
+        class about_us_popup(ttk.Toplevel):
+            def __init__(self):
+                super().__init__("litera")
+
+                self.title("About us")
+                self.geometry("700x800")
+                self.resizable(width=False, height=False)
+
+                self.create_widgets()
+                self.create_layout()
+
+                self.mainloop()
+
+            def create_widgets(self):
+                self.title_label = Label(
+                    self,
+                    text="Health Odyssey",
+                    font="roboto 45 bold italic",
+                    foreground="#222",
+                )
+                self.arthur_label = Label(
+                    self,
+                    text="This app was made by Arshia sotoode",
+                    font=("Roboto Condensed", 20, "italic"),
+                    foreground="#222",
+                )
+                self.repo_label = Label(
+                    self,
+                    text="All the soure code is published on this Github repo :",
+                    font=("Roboto Condensed", 20, "bold"),
+                    foreground="#222",
+                )
+
+                self.github_repo_image = PhotoImage(
+                    file=r"C:\Users\user\Desktop\Python\weght-tracker-cs50p\assets\git-repo.png"
+                )
+
+                def open_repo():
+                    webbrowser.open("https://github.com/ArshiaSotoode/Health-Odyssey")
+
+                self.github_repo_button = Button(
+                    self,
+                    image=self.github_repo_image,
+                    style="link.TButton",
+                    command=open_repo,
+                )
+                self.contact_label = Label(
+                    self,
+                    text="Contact me on :",
+                    font=("Roboto Condensed", 22, "italic"),
+                    foreground="#222",
+                )
+
+                self.contact_frame = Frame(self)
+
+                self.github_mark_image = PhotoImage(
+                    file=r"C:\Users\user\Desktop\Python\weght-tracker-cs50p\assets\github-mark.png"
+                )
+                self.email_image = PhotoImage(
+                    file=r"C:\Users\user\Desktop\Python\weght-tracker-cs50p\assets\email_icon.png"
+                )
+
+                def open_github():
+                    webbrowser.open("https://github.com/ArshiaSotoode")
+
+                def email_me():
+                    webbrowser.open("https://github.com/ArshiaSotoode/Health-Odyssey")
+
+                self.github_acount_button = Button(
+                    contact_frame,
+                    image=self.github_mark_image,
+                    style="link.TButton",
+                    command=open_github,
+                )
+
+                self.email_button = Button(
+                    contact_frame,
+                    image=self.email_image,
+                    style="link.TButton",
+                    command=email_me,
+                )
+
+                self.cs50_label = Label(
+                    self,
+                    text="this app was done as a final project\n            for the CS50P course ",
+                    font=("Roboto Condensed", 20),
+                    foreground="#222",
+                )
+
+            def create_layout(self):
+                self.title_label.pack()
+                self.arthur_label.pack(pady=40)
+                self.repo_label.pack()
+                self.github_repo_button.pack(pady=40)
+                self.contact_label.pack()
+                self.github_acount_button.pack(side="left", padx=20)
+                self.email_button.pack(side="right", padx=20)
+                self.contact_frame.pack(pady=20)
+                self.cs50_label.pack(pady=40)
 
     # creating the main frame
     class MainFrame(Frame):
