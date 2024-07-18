@@ -12,7 +12,7 @@ from tkinter.font import nametofont
 from os.path import exists
 from os import mkdir
 from string import punctuation
-from datetime import date
+from datetime import date, timedelta
 import webbrowser
 
 # file variables
@@ -1506,12 +1506,14 @@ class App(ttk.Window):
                 super().__init__(parent)
                 # setup
                 self.create_widgets()
+                self.estamate_line()
                 self.load_update_data()
                 self.create_layout()
                 # placing the frame inside of the main frame
                 self.grid(column=1, row=2, sticky=NSEW)
 
             def load_update_data(self):
+
                 self.ax.cla()
                 # make the x axis(dates) more elegant and human readable
                 self.fig.autofmt_xdate()
@@ -1519,10 +1521,30 @@ class App(ttk.Window):
                 self.x = App.main_data["dates"]
                 self.y = App.main_data["weights"]
                 self.ax.plot(self.x, self.y, label="user input", marker="o")
+                if App.average_daily_lost != 0:
+                    self.estamate_line()
+                    self.ax.plot(self.est_x, self.est_y, label="estimated", marker="o")
                 self.ax.legend()
                 self.canvas.draw()
 
                 # plotting the estimated data
+
+            def estamate_line(self):
+                if App.average_daily_lost != 0:
+                    self.estamated_days_left = round(
+                        App.weight_lost_total / App.average_daily_lost
+                    )
+                    self.estimated_date = App.today + timedelta(
+                        days=self.estamated_days_left
+                    )
+                    self.est_x = [
+                        App.user_info.at[0, "start date"],
+                        self.estimated_date,
+                    ]
+                    self.est_y = [
+                        App.user_info.at[0, "start weight"],
+                        App.user_info.at[0, "target weight"],
+                    ]
 
             def create_widgets(self):
                 plt.style.use("seaborn-v0_8-whitegrid")
