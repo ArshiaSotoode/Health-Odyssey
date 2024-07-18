@@ -44,7 +44,7 @@ def check_sign_up():
 
 # creating the validating functions
 def validate_name(input):
-    if any(p in input for p in punctuation) or input.isdigit() or len(input) < 3:
+    if any(p in input for p in punctuation) or any(char.isdigit() for char in input) or len(input) < 3:
         return False
     else:
         return True
