@@ -2,27 +2,27 @@
 
 <h1 align="center">Health Odyssey</h1>
 
-Welcome to **Health Odyssey**, your ultimate weight tracking companion! This app is designed to help you monitor your weight journey, visualize your progress, and achieve your health and fitness goals with ease. Whether you're looking to lose weight, gain muscle, or maintain your current state, Health Odyssey provides the tools and insights you need to stay on track.
+🌟 Welcome to Health Odyssey 🌟, your ultimate weight tracking companion! This app is designed to help you monitor your weight journey, visualize your progress, and achieve your health and fitness goals with ease. Whether you're looking to lose weight, gain muscle, or maintain your current state, Health Odyssey provides the tools and insights you need to stay on track.
 
-#### [Video Demo](https://cs50.harvard.edu/python/2022/project/)
+#### [🎥 Video Demo](https://cs50.harvard.edu/python/2022/project/)
 
-## Features
+## 🌟 Features
 
-- **Intuitive Weight Tracking**: Easily log your weight entries daily, weekly, or monthly. The user-friendly interface makes it simple to input your data quickly, ensuring you can stay focused on your goals without any hassle.
+- **📈 Intuitive Weight Tracking**: Easily log your weight entries daily, weekly, or monthly. The user-friendly interface makes it simple to input your data quickly, ensuring you can stay focused on your goals without any hassle.
 
-- **Interactive Graphs**: Visualize your progress with customizable graphs that display your weight trends over time. These graphs allow you to see how your weight has changed, identify patterns, and make informed decisions about your health journey.
+- **📊 Interactive Graphs**: Visualize your progress with customizable graphs that display your weight trends over time. These graphs allow you to see how your weight has changed, identify patterns, and make informed decisions about your health journey.
 
-- **Goal Setting**: Set your target weight and monitor your progress towards achieving it. Whether you want to lose a few pounds or gain muscle, setting a clear goal helps keep you motivated and accountable.
+- **🎯 Goal Setting**: Set your target weight and monitor your progress towards achieving it. Whether you want to lose a few pounds or gain muscle, setting a clear goal helps keep you motivated and accountable.
 
-- **Progress Insights**: Gain valuable insights into your weight fluctuations and milestones. The app provides detailed statistics and analysis of your weight data, helping you understand the factors that influence your progress.
+- **🔍 Progress Insights**: Gain valuable insights into your weight fluctuations and milestones. The app provides detailed statistics and analysis of your weight data, helping you understand the factors that influence your progress.
 
-- **Reminders**: Set reminders to log your weight regularly and stay consistent with your tracking. Consistency is key to achieving your goals, and the reminder feature ensures you never miss an entry.
+- **⏰ Reminders**: Set reminders to log your weight regularly and stay consistent with your tracking. Consistency is key to achieving your goals, and the reminder feature ensures you never miss an entry.
 
-- **Secure Data Storage**: Your weight data is securely stored and can be backed up and restored as needed. Privacy and security are top priorities, so you can be confident that your information is protected.
+- **🔒 Secure Data Storage**: Your weight data is securely stored and can be backed up and restored as needed. Privacy and security are top priorities, so you can be confident that your information is protected.
 
-## Getting Started
+## 🚀 Getting Started
 
-### Installation
+### 🛠️ Installation
 
 To install Health Odyssey, follow these steps:
 
@@ -39,7 +39,7 @@ To install Health Odyssey, follow these steps:
    pip install -r requirements.txt
    ```
 
-### Usage
+### 🏃‍♂️ Usage
 
 To start using Health Odyssey, run the following command:
 
@@ -49,7 +49,7 @@ To start using Health Odyssey, run the following command:
 
 Follow the on-screen instructions to set up your profile and start logging your weight entries.
 
-## Screenshots
+## 📸 Screenshots
 <p align="center">
   <img src="https://github.com/ArshiaSotoode/Health-Odyssey/blob/main/repo-assets/sign-up.png" alt="Sign up window" />
 </p>
@@ -63,7 +63,7 @@ Follow the on-screen instructions to set up your profile and start logging your 
 </p>
 
 
-## Contribution
+## 💻 Contribution
 
 If you are interested in contributing to Health Odyssey or exploring its codebase, follow these additional steps:
 
@@ -93,7 +93,7 @@ If you are interested in contributing to Health Odyssey or exploring its codebas
 
 
 
-## Acknowledgements
+## 🙏 Acknowledgements
 
 - Thank you to the fantastic team at **CS50p** for helping me to achieve the skills to make this project happen .
 
@@ -102,7 +102,7 @@ If you are interested in contributing to Health Odyssey or exploring its codebas
 - A special thanks to the open-source community specially the [ttkbootstrap](https://ttkbootstrap.readthedocs.io/en/latest/) and [pandas](https://pandas.pydata.org/) for the libraries and tools that made this project possible. The collective knowledge and shared resources are truly inspiring.
 
 
-## Contact
+## 📬 Contact
 
 If you have any questions, suggestions, or feedback, please feel free to reach out:
 
