@@ -7,3 +7,5 @@ data/main_data.csv
 project/g.py
 project/__pycache__/project.cpython-310.pyc
 cc.py
+__pycache__/project.cpython-310.pyc
+__pycache__/test_project.cpython-310-pytest-7.4.0.pyc
