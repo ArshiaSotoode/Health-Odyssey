@@ -51,8 +51,9 @@ Follow the on-screen instructions to set up your profile and start logging your 
 
 ## Screenshots
 <p align="center">
-  <img src="[http://some_place.com/image.png](https://github.com/ArshiaSotoode/Health-Odyssey/blob/main/repo-assets/sign-up.png)" alt="Sign up window" />
+  <img src="https://github.com/ArshiaSotoode/Health-Odyssey/blob/main/repo-assets/sign-up.png" alt="Sign up window" />
 </p>
+
 ![Sign up window](https://github.com/ArshiaSotoode/Health-Odyssey/blob/main/repo-assets/sign-up.png)
 
 ![wight entry popup](https://github.com/ArshiaSotoode/Health-Odyssey/blob/main/repo-assets/weight-entry.png)
