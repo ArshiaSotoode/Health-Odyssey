@@ -397,7 +397,7 @@ class App(ttk.Window):
     def process_weights(cls):
         cls.current_weight = App.main_data["weights"].iloc[-1]
 
-        cls.weight_lost = App.main_data["weights"].iloc[0] - cls.current_weight
+        cls.weight_lost = App.user_info.at[0, "start weight"] - cls.current_weight
         cls.weight_remaining = cls.current_weight - App.user_info.at[0, "target weight"]
         cls.weight_lost_total = (
             App.user_info.at[0, "start weight"] - App.user_info.at[0, "target weight"]
