@@ -108,6 +108,6 @@ If you have any questions, suggestions, or feedback, please feel free to reach o
 
 - Email: seyyedarshia.sotoode@example.com
 
-- GitHub: @ArshiaSotoode
+- GitHub: [@ArshiaSotoode](https://github.com/ArshiaSotoode)
 
 Your feedback is greatly appreciated and helps to make Health Odyssey better for everyone. Happy tracking!
