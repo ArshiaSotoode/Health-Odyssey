@@ -54,11 +54,14 @@ Follow the on-screen instructions to set up your profile and start logging your 
   <img src="https://github.com/ArshiaSotoode/Health-Odyssey/blob/main/repo-assets/sign-up.png" alt="Sign up window" />
 </p>
 
-![Sign up window](https://github.com/ArshiaSotoode/Health-Odyssey/blob/main/repo-assets/sign-up.png)
+<p align="center">
+  <img src="https://github.com/ArshiaSotoode/Health-Odyssey/blob/main/repo-assets/weight-entry.png" alt="wight entry popup" />
+</p>
 
-![wight entry popup](https://github.com/ArshiaSotoode/Health-Odyssey/blob/main/repo-assets/weight-entry.png)
+<p align="center">
+  <img src="https://github.com/ArshiaSotoode/Health-Odyssey/blob/main/repo-assets/dashbord.png" alt="main dashboard" />
+</p>
 
-![main dashboard](https://github.com/ArshiaSotoode/Health-Odyssey/blob/main/repo-assets/dashbord.png)
 
 
 
