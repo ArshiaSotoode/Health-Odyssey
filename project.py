@@ -44,7 +44,11 @@ def check_sign_up():
 
 # creating the validating functions
 def validate_name(input):
-    if any(p in input for p in punctuation) or any(char.isdigit() for char in input) or len(input) < 3:
+    if (
+        any(p in input for p in punctuation)
+        or any(char.isdigit() for char in input)
+        or len(input) < 3
+    ):
         return False
     else:
         return True
@@ -823,7 +827,7 @@ class App(ttk.Window):
                 )
 
                 self.github_repo_image = PhotoImage(
-                    file=r"C:\Users\user\Desktop\Python\weght-tracker-cs50p\assets\git-repo.png"
+                    file=get_path(r"assets\git-repo.png")
                 )
 
                 def open_repo():
@@ -845,11 +849,9 @@ class App(ttk.Window):
                 self.contact_frame = Frame(self)
 
                 self.github_mark_image = PhotoImage(
-                    file=r"C:\Users\user\Desktop\Python\weght-tracker-cs50p\assets\github-mark.png"
+                    file=get_path(r"assets\github-mark.png")
                 )
-                self.email_image = PhotoImage(
-                    file=r"C:\Users\user\Desktop\Python\weght-tracker-cs50p\assets\email_icon.png"
-                )
+                self.email_image = PhotoImage(file=get_path(r"assets\email_icon.png"))
 
                 def open_github():
                     webbrowser.open("https://github.com/ArshiaSotoode")
