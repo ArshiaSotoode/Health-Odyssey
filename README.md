@@ -28,7 +28,7 @@ To install Health Odyssey, follow these steps:
 
 1. **Clone the repository**:
    ```bash
-   git clone https://github.com/yourusername/HealthOdyssey.git
+   git clone https://github.com/ArshiaSotoode/Health-Odyssey.git
    ```
 2. **Navigate to the project directory:**
    ```bash
