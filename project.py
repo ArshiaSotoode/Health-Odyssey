@@ -855,17 +855,17 @@ class App(ttk.Window):
                     webbrowser.open("https://github.com/ArshiaSotoode")
 
                 def email_me():
-                    webbrowser.open("https://github.com/ArshiaSotoode/Health-Odyssey")
+                    webbrowser.open("mailto:seyyedarshia.sotoode@gmail.com?")
 
                 self.github_acount_button = Button(
-                    contact_frame,
+                    self.contact_frame,
                     image=self.github_mark_image,
                     style="link.TButton",
                     command=open_github,
                 )
 
                 self.email_button = Button(
-                    contact_frame,
+                    self.contact_frame,
                     image=self.email_image,
                     style="link.TButton",
                     command=email_me,
@@ -884,9 +884,9 @@ class App(ttk.Window):
                 self.repo_label.pack()
                 self.github_repo_button.pack(pady=40)
                 self.contact_label.pack()
+                self.contact_frame.pack(pady=20)
                 self.github_acount_button.pack(side="left", padx=20)
                 self.email_button.pack(side="right", padx=20)
-                self.contact_frame.pack(pady=20)
                 self.cs50_label.pack(pady=40)
 
     # creating the main frame
