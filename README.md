@@ -32,7 +32,7 @@ To install Health Odyssey, follow these steps:
    ```
 2. **Navigate to the project directory:**
    ```bash
-   cd HealthOdyssey
+   cd Health-Odyssey
    ```
 3. **Install the required dependencies:**
    ```bash
