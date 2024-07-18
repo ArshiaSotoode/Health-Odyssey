@@ -1,4 +1,5 @@
 from project import validate_name, calculate_BMI, give_percentage
+import pytest
 
 
 def test_validate_name():
