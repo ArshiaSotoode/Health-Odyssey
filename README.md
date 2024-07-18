@@ -1,4 +1,4 @@
-![Alt text](https://github.com/ArshiaSotoode/Health-Odyssey/blob/main/repo-assets/logo.png)
+![](https://github.com/ArshiaSotoode/Health-Odyssey/blob/main/repo-assets/logo.png)
 
 <h1 align="center">Health Odyssey</h1>
 
@@ -50,11 +50,14 @@ To start using Health Odyssey, run the following command:
 Follow the on-screen instructions to set up your profile and start logging your weight entries.
 
 ## Screenshots
-![Alt text](https://github.com/ArshiaSotoode/Health-Odyssey/blob/main/repo-assets/sign-up.png)
+<p align="center">
+  <img src="[http://some_place.com/image.png](https://github.com/ArshiaSotoode/Health-Odyssey/blob/main/repo-assets/sign-up.png)" alt="Sign up window" />
+</p>
+![Sign up window](https://github.com/ArshiaSotoode/Health-Odyssey/blob/main/repo-assets/sign-up.png)
 
-![Alt text](https://github.com/ArshiaSotoode/Health-Odyssey/blob/main/repo-assets/weight-entry.png)
+![wight entry popup](https://github.com/ArshiaSotoode/Health-Odyssey/blob/main/repo-assets/weight-entry.png)
 
-![Alt text](https://github.com/ArshiaSotoode/Health-Odyssey/blob/main/repo-assets/dashbord.png)
+![main dashboard](https://github.com/ArshiaSotoode/Health-Odyssey/blob/main/repo-assets/dashbord.png)
 
 
 
