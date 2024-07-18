@@ -52,9 +52,11 @@ Follow the on-screen instructions to set up your profile and start logging your 
 ## Screenshots
 ![Alt text](https://github.com/ArshiaSotoode/Health-Odyssey/blob/main/repo-assets/sign-up.png)
 
+![Alt text](https://github.com/ArshiaSotoode/Health-Odyssey/blob/main/repo-assets/weight-entry.png)
+
 ![Alt text](https://github.com/ArshiaSotoode/Health-Odyssey/blob/main/repo-assets/dashbord.png)
 
-![Alt text](https://github.com/ArshiaSotoode/Health-Odyssey/blob/main/repo-assets/weight-entry.png)
+
 
 ## Acknowledgements
 
