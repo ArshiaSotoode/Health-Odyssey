@@ -93,9 +93,6 @@ If you are interested in contributing to Health Odyssey or exploring its codebas
 
 
 
-
-
-
 ## Acknowledgements
 
 - Thank you to the fantastic team at **CS50p** for helping me to achieve the skills to make this project happen .
@@ -111,6 +108,6 @@ If you have any questions, suggestions, or feedback, please feel free to reach o
 
 - Email: seyyedarshia.sotoode@example.com
 
-- GitHub: @Arshia
+- GitHub: @ArshiaSotoode
 
 Your feedback is greatly appreciated and helps to make Health Odyssey better for everyone. Happy tracking!
