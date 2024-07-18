@@ -1,4 +1,4 @@
-![Alt text](https://github.com/ArshiaSotoode/weght-tracker-cs50p/blob/main/logo.png)
+![Alt text](https://github.com/ArshiaSotoode/Health-Odyssey/blob/main/repo-assets/logo.png)
 
 <h1 align="center">Health Odyssey</h1>
 
@@ -50,6 +50,11 @@ To start using Health Odyssey, run the following command:
 Follow the on-screen instructions to set up your profile and start logging your weight entries.
 
 ## Screenshots
+![Alt text](https://github.com/ArshiaSotoode/Health-Odyssey/blob/main/repo-assets/sign-up.png)
+
+![Alt text](https://github.com/ArshiaSotoode/Health-Odyssey/blob/main/repo-assets/dashbord.png)
+
+![Alt text](https://github.com/ArshiaSotoode/Health-Odyssey/blob/main/repo-assets/weight-entry.png)
 
 ## Acknowledgements
 
