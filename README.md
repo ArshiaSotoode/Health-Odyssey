@@ -18,8 +18,7 @@
 
 - **⏰ Reminders**: Set reminders to log your weight regularly and stay consistent with your tracking. Consistency is key to achieving your goals, and the reminder feature ensures you never miss an entry.
 
-- **🔒 Secure Data Storage**: Your weight data is securely stored and can be backed up and restored as needed. Privacy and security are top priorities, so you can be confident that your information is protected.
-
+- **🔒 Secure Data Storage**: Your weight data is securely stored locally and can be backed up and restored as needed. Privacy and security are top priorities, so you can be confident that your information is private.
 ## 🚀 Getting Started
 
 ### 🛠️ Installation
