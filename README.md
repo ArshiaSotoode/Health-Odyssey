@@ -4,7 +4,7 @@
 
 🌟 Welcome to **Health Odyssey** 🌟, your ultimate weight tracking companion! This app is designed to help you monitor your weight journey, visualize your progress, and achieve your health and fitness goals with ease. Whether you're looking to lose weight, gain muscle, or maintain your current state, Health Odyssey provides the tools and insights you need to stay on track.
 
-#### [🎥 Video Demo](https://cs50.harvard.edu/python/2022/project/)
+#### [🎥 Video Demo](https://youtu.be/b9c6UZlDD7o)
 
 ## 🌟 Features
 
@@ -18,8 +18,7 @@
 
 - **⏰ Reminders**: Set reminders to log your weight regularly and stay consistent with your tracking. Consistency is key to achieving your goals, and the reminder feature ensures you never miss an entry.
 
-- **🔒 Secure Data Storage**: Your weight data is securely stored and can be backed up and restored as needed. Privacy and security are top priorities, so you can be confident that your information is protected.
-
+- **🔒 Secure Data Storage**: Your weight data is securely stored locally and can be backed up and restored as needed. Privacy and security are top priorities, so you can be confident that your information is private.
 ## 🚀 Getting Started
 
 ### 🛠️ Installation
